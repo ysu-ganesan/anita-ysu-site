@@ -515,8 +515,12 @@ function placeSphere() {
   for (const [el, f] of places) { const r = el.getBoundingClientRect(); if (r.top <= mid && r.bottom > mid) { Object.assign(sphere.want, f()); here = el; break; } }
   const diving = here === walkSec && !!city && !!cityCore && graph.on;
   sphere.ease = diving ? 14 : 3.2;   // the dive keeps up with the scroll; everywhere else it glides
-  // the walk's 3D city is opaque, so while the graph flies in (or back out) it is lifted over the page; never once settled
-  document.body.classList.toggle('graph-over', diving && walkEnter < 1 && sphere.at.alpha > 0.01);
+  // the walk's 3D city is opaque: wherever it reaches the graph (rising under it in "You choose what she forgets",
+  // the dive, scrolling back up, leaving) the graph is lifted over the page, so it is never cut off by the black.
+  // Never while it is settled in the core (it is not drawn then)
+  const A = sphere.at, VW = document.documentElement.clientWidth, VH = document.documentElement.clientHeight;
+  const gR = A.r * Math.min(VW, VH * 1.25), touching = w.top < A.y * VH + gR && w.bottom > A.y * VH - gR;
+  document.body.classList.toggle('graph-over', !!city && graph.on && touching && A.alpha > 0.01);
   // on the drawn road the sphere is home, on the horizon, and snaps there
   if (!city && w.top <= 0 && w.bottom >= innerHeight) Object.assign(sphere.at, sphere.want);
   const doorTop = $('.door').getBoundingClientRect().top;
