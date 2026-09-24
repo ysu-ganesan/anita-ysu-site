@@ -197,9 +197,9 @@ body.pre-real .her { opacity: 0; filter: brightness(2.4) saturate(0) drop-shadow
 .day-wash i:nth-child(2) { background: radial-gradient(ellipse 65vw 60vh at 68% 25%, rgba(88,230,255,.26), transparent 70%); }
 .day-wash i:nth-child(3) { background: radial-gradient(ellipse 60vw 50vh at 72% 85%, rgba(255,150,110,.24), transparent 70%), radial-gradient(ellipse 50vw 45vh at 60% 20%, rgba(180,120,255,.15), transparent 70%); }
 .day-wash i:nth-child(4) { background: radial-gradient(ellipse 60vw 60vh at 68% 30%, rgba(50,90,220,.3), transparent 70%); }
-.day-time { position: absolute; left: 68vw; top: 5vh; transform: translateX(-50%); z-index: 1; display: flex; flex-direction: column-reverse; align-items: center; line-height: .85; transition: opacity .5s var(--ease-soft), translate .5s var(--ease-soft); }
+.day-time { position: absolute; left: 68vw; top: 9vh; transform: translateX(-50%); z-index: 1; display: flex; flex-direction: column-reverse; align-items: center; line-height: .85; transition: opacity .5s var(--ease-soft), translate .5s var(--ease-soft); }
 .day-time b { display: block; font-family: var(--font-display); font-weight: 500; font-size: min(15vw, 30vh); color: rgba(234,246,248,.07); -webkit-text-stroke: 1px rgba(88,230,255,.35); letter-spacing: .02em; font-variant-numeric: tabular-nums; }
-.day-time span { display: block; margin-bottom: 1.2em; font-family: var(--font-display); font-size: .72rem; letter-spacing: .5em; text-transform: uppercase; color: var(--cyan); }
+.day-time span { display: block; margin-bottom: .9em; font-family: var(--font-display); font-size: .72rem; letter-spacing: .5em; text-transform: uppercase; color: var(--cyan); }
 .day-note { position: absolute; left: 80vw; top: 36vh; width: min(270px, 17vw); z-index: 3; padding: 14px 16px; border-radius: 18px;
   background: rgba(10,20,28,.62); border: 1px solid var(--line); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 18px 50px rgba(0,0,0,.5);
   opacity: 0; translate: 0 18px; transition: opacity .6s var(--ease-soft), translate .8s var(--ease-out); }
