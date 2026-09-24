@@ -8,13 +8,24 @@ import { Anita } from './sprite.js';
 import { MemorySphere } from './sphere.js';
 import { MemoryGraph } from './graph.js';
 import { startCursor } from './cursor.js';
-import { VideoTrack } from './videotrack.js';
+import { VideoTrack, PoseTrack, poseTime } from './videotrack.js';
 
 // The reel's cursor-tracking method. Drop the Google Flow video at LOOK.src and the hero uses it: the cursor's
 // position along LOOK.axis scrubs it (left edge of the screen = its first frame, right edge = its last). from/to
 // trim it, in seconds (null = the end). Until the file exists, the sprite version below stands in.
 // reverse: true if the video turns the other way (right to left).
 const LOOK = { src: 'assets/anita-look.mp4', axis: 'horizontal', from: 0, to: null, reverse: false };
+
+// 24 Sep, by request: in the hero she is the Google Flow take (assets/sprites/Woman_moving_head_and_eyes_…mp4)
+// in place of J's sprite, same spot, same size. Its black was cut out to alpha (anita-flow.webm, VP9), so the
+// memory graph still shows around her. The take is a path through her poses, read off its frames as
+// [seconds, x, y] (x: -1 screen left … 1 right, y: -1 up … 1 down): at you, up, up-right, turning right,
+// crouching to look down, rising back to you. null skips 4.9–5.5 s, where the take glitches (a ghost arm).
+// The cursor picks the nearest pose (videotrack.js → poseTime). Delete this line to go back to J's sprite.
+const FLOW_HER = { src: 'assets/anita-flow.webm', gaps: [[4.9, 5.5]], jump: 0.9, ease: 6,
+  poses: [[0, 0, 0], [0.5, 0, -0.7], [1, 0.2, -0.9], [1.5, 0.25, -0.8], [2, 0.55, -0.3], [2.25, 0.6, -0.2],
+          [2.5, 0.45, 0], [3, 0.75, 0], [3.5, 0.9, 0.05], [4, 0.8, 0.4], [4.25, 0.6, 0.6], [4.75, 0.3, 0.9], null,
+          [5.5, 0.1, 1], [6, -0.1, 1], [6.5, -0.3, 0.8], [7, -0.3, 0.5], [7.5, -0.1, 0.2], [7.9, 0, 0.1]] };
 
 window.__ysu = true;   // tells the safety net in index.html that the page came up
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
@@ -93,6 +104,17 @@ fetch(LOOK.src, { method: 'HEAD' }).then(r => {
   document.body.classList.add('look-video');
   look = new VideoTrack(v, LOOK);
 }, () => {});
+// her Flow take in the hero (FLOW_HER above). VP9 alpha: Chrome, Edge, Firefox. Safari shows alpha WebM as
+// black, so it keeps J's sprite.
+let flowHer = null;
+const vp9alpha = document.createElement('video').canPlayType('video/webm; codecs="vp9"') && !/^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+if (typeof FLOW_HER !== 'undefined' && vp9alpha) {
+  const mk = () => { const v = document.createElement('video'); v.className = 'sprite flow-her'; v.src = FLOW_HER.src; v.setAttribute('aria-hidden', 'true'); return v; };
+  const a = mk(), b = mk();
+  a.addEventListener('loadeddata', () => { document.body.classList.add('has-flow-her'); }, { once: true });
+  $('#sprite-hero').after(a, b);
+  flowHer = new PoseTrack(a, b, FLOW_HER);
+}
 if (location.search.includes('debug')) Object.assign(window, { __hero: heroHer, __walk: walkHer });   // for testing only
 if (reduce) heroHer.speed = walkHer.speed = 0;   // she stands still for people who asked for less motion
 
@@ -598,6 +620,11 @@ function frame(now) {
   footGlow(dt);
 
   // her: only one is drawn, and only while she is on screen
+  if (flowHer) {
+    // she follows the cursor while the first beat is up, then turns back to you for the call
+    const on = ptr.on && !reduce && hp < 0.2, gx = on ? (ptr.x / innerWidth) * 2 - 1 : 0, gy = on ? (ptr.y / innerHeight) * 2 - 1 : 0;
+    flowHer.aimTime(poseTime(FLOW_HER.poses, gx, gy)); flowHer.tick(dt);
+  }
   if (look) {
     // the reel's slider: where the cursor sits across the screen is where she looks; no cursor, she looks ahead
     const p = !ptr.on || reduce ? 0.5 : LOOK.axis === 'vertical' ? ptr.y / innerHeight : ptr.x / innerWidth;
