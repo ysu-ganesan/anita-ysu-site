@@ -187,6 +187,17 @@ body.pre-real .her { opacity: 0; filter: brightness(2.4) saturate(0) drop-shadow
 .hero-v1 .hero-copy h1 { font-size: clamp(1.7rem, 2.7vw, 2.7rem); }
 .hero-v1 .hero-copy .k { margin-bottom: 1em; }
 .hero-v1 .hero-copy .lede { font-size: .95rem; }
+/* ── hero design 6 (/?hero=6, main.js → HERO === 6): her in a scene, a framed window onto ANITA HQ */
+.scene { display: none; }
+.hero-v6 .scene { display: block; position: absolute; right: var(--pad); top: 11vh; bottom: 5vh; width: 48vw; z-index: 1; border-radius: 28px; overflow: hidden;
+  border: 1px solid var(--line); box-shadow: 0 30px 90px rgba(0,0,0,.65), 0 0 70px rgba(88,230,255,.08); opacity: 0; transition: opacity 1.4s var(--ease-soft); }
+.hero-v6 .scene.on { opacity: 1; }
+.hero-v6 .scene canvas { display: block; width: 100%; height: 100%; }
+.hero-v6 .hero-copy { max-width: min(660px, 40vw); }
+.hero-v6 .hero-copy h1 { font-size: clamp(2.2rem, 4.2vw, 4rem); }
+.hero-v6 .hero-talk { width: min(520px, 40vw); }
+.hero-v6 .her { bottom: auto; transition: filter 1.6s var(--ease-soft); }
+.hero-v6 .pool { display: none; }
 /* ── hero design 5 (/?hero=5): inside her memory, then the pull-back (main.js → HERO === 5) */
 .inside-line { display: none; }
 .hero-v5 .inside-line { display: block; position: absolute; left: 50%; bottom: 12vh; transform: translateX(-50%); z-index: 3; margin: 0; pointer-events: none; text-align: center;

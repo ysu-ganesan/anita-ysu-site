@@ -506,6 +506,7 @@ function intoCore() {
 const places = [
   ['.hero',    () => narrow() ? { x: 0.5, y: 0.66, r: 0.4, alpha: 0.85 }
                 : HERO === 5 ? pullBack()
+                : HERO === 6 ? { x: 0.28, y: 0.5, r: 0.3, alpha: 0 }   // design 6: her memory lives in the scene's core instead
                 : HERO === 1 ? { x: lerp(0.5, 0.68, ss(0.1, 0.3, heroP)), y: 0.45, r: 0.4, alpha: 1 }   // design 1: centred, behind the letters
                 : { x: 0.68, y: 0.52, r: 0.38, alpha: 1 }],
   // the mind scene: behind the vow, then behind her memory's heading, filling in as the moments are kept
@@ -548,7 +549,14 @@ const HERO = narrow() ? 0 : +(new URLSearchParams(location.search).get('hero') |
 if (HERO === 1) document.body.classList.add('hero-v1');
 if (HERO === 2) document.body.classList.add('hero-v2');
 if (HERO === 4) document.body.classList.add('hero-v4');
-if (HERO === 5) document.body.classList.add('hero-v5');   // design 5: inside her memory, then the pull-back
+if (HERO === 5) document.body.classList.add('hero-v5');
+// design 6: her in a scene. A second copy of the walk's world (city.js), framed on the right, at its first moment
+let heroCity = null, sceneT = 0;
+if (HERO === 6) {
+  document.body.classList.add('hero-v6');
+  let ok = false; try { ok = !!document.createElement('canvas').getContext('webgl2'); } catch {}
+  if (ok) import('./city.js').then(m => { heroCity = m.startCity($('#scene-city')); $('#scene').classList.add('on'); }, e => console.warn('scene', e));
+}   // design 5: inside her memory, then the pull-back
 const INTRO = HERO === 5 ? 0.16 : 0;   // the share of the hero's scroll the pull-back takes; the rest plays as before
 // design 4: a day with her. Her notes are the site's own memories of Maya
 const DAY = [
@@ -611,6 +619,19 @@ function frame(now) {
     introK = words;
   }
   if (HERO === 4) dayTick(dt, hp);
+  if (HERO === 6 && heroCity) {
+    // the arrival after the gate: the camera flies down to her while HQ powers up, then she is there. She stands
+    // on its floor at its door, placed from the scene's own camera (as in the walk)
+    if (gate.classList.contains('is-gone')) sceneT += dt;
+    const en = ss(0, 1, 0.15 + sceneT / 2.8), sc = $('#scene').getBoundingClientRect();
+    if (sc.bottom > 0 && sc.top < innerHeight) {
+      const gw = graph.on ? graph.world.rotation : null;
+      const s = heroCity(0, dt, en, gw && { fade: ss(0.5, 0.9, en), rx: gw.x, ry: gw.y, rz: gw.z, day: graph.day, gone: graph.gone });
+      const pin = $('.hero-pin').getBoundingClientRect(), herBox = $('#her-hero');
+      Object.assign(herBox.style, { top: `${(sc.top - pin.top + s.headY * sc.height).toFixed(1)}px`, height: `${((s.feetY - s.headY) * sc.height).toFixed(1)}px`,
+        left: `${(sc.left - pin.left + s.x * sc.width).toFixed(1)}px`, opacity: ss(0.72, 1, en).toFixed(3) });
+    }
+  }
   if (HERO === 1) {
     // design 1: the letters rise in after the gate, drift gently against the cursor (eased, so it floats), and as
     // the call comes in they spread apart and fade while she glides back to the right to make room for it
