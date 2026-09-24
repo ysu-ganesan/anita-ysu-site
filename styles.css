@@ -187,6 +187,30 @@ body.pre-real .her { opacity: 0; filter: brightness(2.4) saturate(0) drop-shadow
 .hero-v1 .hero-copy h1 { font-size: clamp(1.7rem, 2.7vw, 2.7rem); }
 .hero-v1 .hero-copy .k { margin-bottom: 1em; }
 .hero-v1 .hero-copy .lede { font-size: .95rem; }
+/* ── hero design 4 (/?hero=4, main.js → DAY): a day with her */
+.day { display: none; }
+.hero-v4 .day { display: block; position: absolute; inset: 0; pointer-events: none; }
+.hero-v4 .chips { display: none; }
+.day-wash i { position: absolute; inset: 0; opacity: 0; transition: opacity 1.8s var(--ease-soft); }
+.day-wash i.on { opacity: 1; }
+.day-wash i:nth-child(1) { background: radial-gradient(ellipse 60vw 55vh at 70% 18%, rgba(140,205,255,.28), transparent 70%), radial-gradient(ellipse 50vw 30vh at 75% 100%, rgba(255,196,150,.12), transparent 70%); }
+.day-wash i:nth-child(2) { background: radial-gradient(ellipse 65vw 60vh at 68% 25%, rgba(88,230,255,.26), transparent 70%); }
+.day-wash i:nth-child(3) { background: radial-gradient(ellipse 60vw 50vh at 72% 85%, rgba(255,150,110,.24), transparent 70%), radial-gradient(ellipse 50vw 45vh at 60% 20%, rgba(180,120,255,.15), transparent 70%); }
+.day-wash i:nth-child(4) { background: radial-gradient(ellipse 60vw 60vh at 68% 30%, rgba(50,90,220,.3), transparent 70%); }
+.day-time { position: absolute; left: 68vw; top: 5vh; transform: translateX(-50%); z-index: 1; display: flex; flex-direction: column-reverse; align-items: center; line-height: .85; transition: opacity .5s var(--ease-soft), translate .5s var(--ease-soft); }
+.day-time b { display: block; font-family: var(--font-display); font-weight: 500; font-size: min(15vw, 30vh); color: rgba(234,246,248,.07); -webkit-text-stroke: 1px rgba(88,230,255,.35); letter-spacing: .02em; font-variant-numeric: tabular-nums; }
+.day-time span { display: block; margin-bottom: 1.2em; font-family: var(--font-display); font-size: .72rem; letter-spacing: .5em; text-transform: uppercase; color: var(--cyan); }
+.day-note { position: absolute; left: 80vw; top: 36vh; width: min(270px, 17vw); z-index: 3; padding: 14px 16px; border-radius: 18px;
+  background: rgba(10,20,28,.62); border: 1px solid var(--line); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 18px 50px rgba(0,0,0,.5);
+  opacity: 0; translate: 0 18px; transition: opacity .6s var(--ease-soft), translate .8s var(--ease-out); }
+.day-note.on { opacity: 1; translate: 0 0; }
+.dn-top { display: flex; align-items: center; gap: 8px; font-family: var(--font-display); font-size: .56rem; letter-spacing: .2em; color: var(--ink); }
+.dn-top span { margin-left: auto; color: var(--dim); letter-spacing: .1em; text-transform: uppercase; }
+.dn-icon { width: 18px; height: 18px; border-radius: 6px; background: radial-gradient(circle at 50% 40%, var(--cyan), #0b3440 75%); box-shadow: 0 0 12px rgba(88,230,255,.5); }
+.day-note p { margin: .7em 0 0; font-size: .86rem; line-height: 1.45; color: var(--ink); }
+.day-bar { position: absolute; right: var(--pad); bottom: 7vh; display: flex; gap: 6px; margin: 0; padding: 0; list-style: none; z-index: 3; }
+.day-bar li { width: 44px; height: 2px; background: rgba(88,230,255,.15); overflow: hidden; }
+.day-bar i { display: block; height: 100%; width: 100%; transform-origin: 0 50%; transform: scaleX(var(--f, 0)); background: var(--cyan); box-shadow: 0 0 8px var(--cyan); }
 /* ── hero design 2 (/?hero=2, heroform.js): she forms from specks of her own pixels, then the sprite fades in over them */
 .hero-v2 .her:not(.is-real) #sprite-hero { opacity: var(--real, 0); }
 .her-form { position: absolute; left: -90%; top: -12%; width: 280%; height: 112%; pointer-events: none; }

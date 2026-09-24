@@ -537,7 +537,39 @@ const hero = $('.hero'), heroCopy = $('.hero-copy'), chips = $('.chips'), bar = 
 // Desktop only for now; phones keep the current hero.
 const HERO = narrow() ? 0 : +(new URLSearchParams(location.search).get('hero') || 0);
 if (HERO === 1) document.body.classList.add('hero-v1');
-if (HERO === 2) document.body.classList.add('hero-v2');   // design 2: she forms from her memories (heroform.js)
+if (HERO === 2) document.body.classList.add('hero-v2');
+if (HERO === 4) document.body.classList.add('hero-v4');
+// design 4: a day with her. Her notes are the site's own memories of Maya
+const DAY = [
+  { at: 7 * 60 + 40,  day: 'Monday',   text: 'Morning. You’re busier on Mondays, so I moved your 9:00 to 9:30.' },
+  { at: 13 * 60 + 5,  day: 'Tuesday',  text: 'The revenue numbers in your deck are from March. I flagged them.' },
+  { at: 18 * 60 + 20, day: 'Thursday', text: 'Your mum mentioned the pottery class again. Her birthday’s on the 15th.' },
+  { at: 21 * 60 + 30, day: 'Friday',   text: 'Film night’s ready. Dubbed, never subtitles.' },
+];
+const DAY_EACH = 4.6;   // seconds on each moment
+const dayEl = { wash: $$('.day-wash i'), clock: $('#day-clock'), name: $('#day-name'), note: $('#day-note'), text: $('#day-text'), bar: $$('.day-bar i'), time: $('.day-time') };
+let dayT = 0, dayAt = -1, dayMin = DAY[0].at;
+const hhmm = m => `${String(Math.floor(m / 60) % 24).padStart(2, '0')}:${String(Math.floor(m % 60)).padStart(2, '0')}`;
+function dayTick(dt, hp) {
+  if (!gate.classList.contains('is-gone')) return;
+  if (hp < 0.2) dayT += dt;   // the day runs while you are on it, and holds while the call has the screen
+  const n = Math.floor(dayT / DAY_EACH) % DAY.length, f = (dayT % DAY_EACH) / DAY_EACH;
+  if (n !== dayAt) {
+    dayAt = n; const m = DAY[n];
+    dayEl.wash.forEach((w, i) => w.classList.toggle('on', i === n));
+    dayEl.note.classList.remove('on');
+    setTimeout(() => { dayEl.text.textContent = m.text; dayEl.name.textContent = m.day; dayEl.note.classList.add('on'); }, n === 0 && dayT < 0.1 ? 0 : 450);
+  }
+  // the clock rolls forward to the moment's time (the night wraps to the next morning)
+  const want = DAY[n].at + (DAY[n].at < dayMin - 60 ? 1440 : 0);
+  dayMin += (want - dayMin) * Math.min(1, dt * 3.5);
+  if (Math.abs(want - dayMin) < 0.6) dayMin = want;   // land on the minute
+  if (dayMin >= 1440) dayMin -= 1440;
+  dayEl.clock.textContent = hhmm(dayMin);
+  dayEl.bar.forEach((b, i) => b.style.setProperty('--f', i < n ? 1 : i === n ? f.toFixed(3) : 0));
+  const out = ss(0.03, 0.2, hp);
+  dayEl.time.style.opacity = dayEl.note.parentElement.style.opacity = (1 - out).toFixed(3);
+}   // design 2: she forms from her memories (heroform.js)
 const wordmark = $('#wordmark'), wmLetters = $$('#wordmark span');
 let heroP = 0, wmx = 0, wmy = 0;
 const mind = $('.mind'), vowLine = $('#vow-line'), mindHead = $('#mind-head'), cards = $$('.moment'), played = new Set();
@@ -557,6 +589,7 @@ function frame(now) {
 
   // hero (lobod): copy and chips leave over 6–36% of its scroll, the sphere turns
   const hr = hero.getBoundingClientRect(), hp = heroP = clamp(-hr.top / (hr.height - innerHeight), 0, 1);
+  if (HERO === 4) dayTick(dt, hp);
   if (HERO === 1) {
     // design 1: the letters rise in after the gate, drift gently against the cursor (eased, so it floats), and as
     // the call comes in they spread apart and fade while she glides back to the right to make room for it
