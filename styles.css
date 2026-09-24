@@ -172,12 +172,6 @@ body.pre-real .her { opacity: 0; filter: brightness(2.4) saturate(0) drop-shadow
 .hero-video[hidden] { display: none; }
 .look-video .her { display: none; }
 .sprite { display: block; }
-/* her Flow take in place of the sprite (main.js → FLOW_HER, flowher.js), drawn on its own canvas */
-.her .flow-her { opacity: 0; pointer-events: none; transform-origin: 50% 100%; animation: breathe 4.2s ease-in-out infinite; }
-@keyframes breathe { 50% { transform: scale(1.004, 1.008); } }   /* she breathes while she holds a pose */
-@media (prefers-reduced-motion: reduce) { .her .flow-her { animation: none; } }
-.has-flow-her .her .flow-her { opacity: 1; }
-.has-flow-her #sprite-hero { visibility: hidden; }
 .pool { position: absolute; left: 50%; bottom: -3vh; width: 170%; height: 16vh; transform: translateX(-50%); pointer-events: none;
   background: radial-gradient(ellipse at center, rgba(88,230,255,.35), rgba(25,200,255,.08) 40%, transparent 70%); filter: blur(4px); }
 .drag { position: absolute; inset: -10vh -30%; z-index: 3; cursor: grab; touch-action: pan-y; }

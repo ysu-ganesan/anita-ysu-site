@@ -9,31 +9,12 @@ import { MemorySphere } from './sphere.js';
 import { MemoryGraph } from './graph.js';
 import { startCursor } from './cursor.js';
 import { VideoTrack } from './videotrack.js';
-import { FlowHer } from './flowher.js';
 
 // The reel's cursor-tracking method. Drop the Google Flow video at LOOK.src and the hero uses it: the cursor's
 // position along LOOK.axis scrubs it (left edge of the screen = its first frame, right edge = its last). from/to
 // trim it, in seconds (null = the end). Until the file exists, the sprite version below stands in.
 // reverse: true if the video turns the other way (right to left).
 const LOOK = { src: 'assets/anita-look.mp4', axis: 'horizontal', from: 0, to: null, reverse: false };
-
-// 24 Sep, by request: in the hero she is two Google Flow takes combined, in place of J's sprite, same spot, same
-// size. Both start from the same picture, so their frames line up. Their black was cut out and every frame packed
-// into one sheet (assets/anita-flow.webp, 12 fps; flowher.js draws it), so the memory graph shows around her.
-// Each take is a path through her poses, read off its frames as [seconds, x, y] (x: -1 screen left … 1 right,
-// y: -1 up … 1 down); null: a blink, played through but never stopped on. The cursor's direction from her face
-// picks the nearest pose on either take. Delete this line to go back to J's sprite.
-const FLOW_HER = { sheet: 'assets/anita-flow.webp', meta: 'assets/anita-flow.json', takes: [
-  // Animated_character_moving_eyes_…_20260924140608: at you, right, up-right, (blink) left, down-left, at you
-  [[0, 0, 0], [0.5, 0.6, 0], [1, 0.7, -0.3], [1.5, 0.5, -0.85], [2.5, 0.45, -0.95], [3.5, 0.45, -0.9], null,
-   [4, -0.7, -0.1], [4.5, -0.6, 0], [5, -0.5, 0.45], [5.5, -0.5, 0.55], [6, -0.45, 0.5], [6.5, -0.4, 0.4],
-   [7, -0.05, 0.2], null, [7.5, 0, 0.05], [7.9, 0, 0]],
-  // Woman_moving_head_and_eyes_20260924134404, its first 2.6 s only (after that she turns and crouches):
-  // at you, up-right, straight up, right and up
-  [[0, 0, 0], [0.125, 0.25, -0.1], [0.25, 0.3, -0.3], [0.5, 0.3, -0.65], [0.75, 0.35, -0.85], [1, 0.3, -0.9],
-   [1.25, 0.05, -0.95], [1.5, 0, -0.95], [1.75, 0.3, -0.8], [2, 0.65, -0.55], [2.25, 0.7, -0.5], [2.5, 0.5, -0.2],
-   [2.6, 0.35, -0.05]],
-] };
 
 window.__ysu = true;   // tells the safety net in index.html that the page came up
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
@@ -112,16 +93,7 @@ fetch(LOOK.src, { method: 'HEAD' }).then(r => {
   document.body.classList.add('look-video');
   look = new VideoTrack(v, LOOK);
 }, () => {});
-// her Flow take in the hero (FLOW_HER above), drawn frame by frame from memory (flowher.js). The sheet decodes
-// to about 110 MB, so phones keep J's sprite.
-let flowHer = null;
-if (typeof FLOW_HER !== 'undefined' && !narrow()) {
-  const cv = document.createElement('canvas'); cv.className = 'sprite flow-her'; cv.setAttribute('aria-hidden', 'true');
-  $('#sprite-hero').after(cv);
-  flowHer = new FlowHer(cv, FLOW_HER);
-  flowHer.onready = () => document.body.classList.add('has-flow-her');
-}
-if (location.search.includes('debug')) Object.assign(window, { __hero: heroHer, __walk: walkHer, __flow: () => flowHer });   // for testing only
+if (location.search.includes('debug')) Object.assign(window, { __hero: heroHer, __walk: walkHer });   // for testing only
 if (reduce) heroHer.speed = walkHer.speed = 0;   // she stands still for people who asked for less motion
 
 // only one of her is ever drawn: whichever stage is on screen (J's first rule)
@@ -626,15 +598,6 @@ function frame(now) {
   footGlow(dt);
 
   // her: only one is drawn, and only while she is on screen
-  if (flowHer) {
-    // like J's sprite: measured from her face, each screen edge is her full look that way. She follows the
-    // cursor while the first beat is up, then looks back at you for the call.
-    const r = flowHer.cv.getBoundingClientRect(), fx = r.left + r.width / 2, fy = r.top + r.height * 0.13;
-    const on = ptr.on && !reduce && hp < 0.2;
-    const nx = on ? clamp((ptr.x - fx) / Math.max(80, ptr.x < fx ? fx : innerWidth - fx), -1, 1) : null;
-    const ny = on ? clamp((ptr.y - fy) / Math.max(80, ptr.y < fy ? fy : innerHeight - fy), -1, 1) : null;
-    flowHer.tick(dt, nx, ny, t);
-  }
   if (look) {
     // the reel's slider: where the cursor sits across the screen is where she looks; no cursor, she looks ahead
     const p = !ptr.on || reduce ? 0.5 : LOOK.axis === 'vertical' ? ptr.y / innerHeight : ptr.x / innerWidth;
