@@ -8,13 +8,20 @@ import { Anita } from './sprite.js';
 import { MemorySphere } from './sphere.js';
 import { MemoryGraph } from './graph.js';
 import { startCursor } from './cursor.js';
-import { VideoTrack } from './videotrack.js';
+import { VideoTrack, PoseTrack, poseTime } from './videotrack.js';
 
 // The reel's cursor-tracking method. Drop the Google Flow video at LOOK.src and the hero uses it: the cursor's
 // position along LOOK.axis scrubs it (left edge of the screen = its first frame, right edge = its last). from/to
 // trim it, in seconds (null = the end). Until the file exists, the sprite version below stands in.
 // reverse: true if the video turns the other way (right to left).
-const LOOK = { src: 'assets/anita-look.mp4', axis: 'horizontal', from: 0, to: null, reverse: false };
+const LOOK = { src: 'assets/anita-look.mp4', axis: 'horizontal', from: 0, to: null, reverse: false,
+  // 24 Sep take (Google Flow, re-encoded with a keyframe every 4 frames so it scrubs): she looks up to the right,
+  // blinks, looks level from the middle to the left, then leans down and looks back up to the right. Read off
+  // its frames; see poseTime in videotrack.js. Delete `poses` to go back to a plain left-to-right sweep.
+  poses: [[0, 0, -0.35], [0.5, 0.35, -0.8], [1, 0.7, -0.9], [1.5, 0.65, -0.85], [1.75, 0.4, -0.55], null,
+          [2.3, 0.15, 0], [2.75, 0.05, 0], [3.25, -0.35, 0], [3.75, -0.7, 0.05], [4.25, -0.4, 0.3],
+          [4.75, -0.35, 0.75], [5.5, -0.3, 1], [6.25, -0.25, 1], [6.75, 0.05, 0.65], [7.25, 0.35, 0.6], [7.75, 0.6, 0.5]],
+  gaps: [[1.8, 2.3]] };
 
 window.__ysu = true;   // tells the safety net in index.html that the page came up
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
@@ -91,7 +98,10 @@ fetch(LOOK.src, { method: 'HEAD' }).then(r => {
   if (!r.ok) return;
   const v = $('#hero-video'); v.src = LOOK.src; v.hidden = false;
   document.body.classList.add('look-video');
-  look = new VideoTrack(v, LOOK);
+  if (LOOK.poses) {
+    const twin = v.cloneNode(); twin.removeAttribute('id'); v.after(twin);
+    look = new PoseTrack(v, twin, LOOK);
+  } else { v.classList.add('is-row'); look = new VideoTrack(v, LOOK); }
 }, () => {});
 if (location.search.includes('debug')) Object.assign(window, { __hero: heroHer, __walk: walkHer });   // for testing only
 if (reduce) heroHer.speed = walkHer.speed = 0;   // she stands still for people who asked for less motion
@@ -601,7 +611,12 @@ function frame(now) {
   if (look) {
     // the reel's slider: where the cursor sits across the screen is where she looks; no cursor, she looks ahead
     const p = !ptr.on || reduce ? 0.5 : LOOK.axis === 'vertical' ? ptr.y / innerHeight : ptr.x / innerWidth;
-    look.aim(LOOK.reverse ? 1 - p : p); look.tick(dt);
+    if (LOOK.poses) {
+      // where the cursor is on the screen, from -1 to 1 each way; no cursor, she looks at you
+      const on = ptr.on && !reduce, gx = on ? (ptr.x / innerWidth) * 2 - 1 : 0.1, gy = on ? (ptr.y / innerHeight) * 2 - 1 : 0;
+      look.aimTime(poseTime(LOOK.poses, LOOK.reverse ? -gx : gx, gy));
+    } else look.aim(LOOK.reverse ? 1 - p : p);
+    look.tick(dt);
   } else if (onScreen.has('her-hero')) {
     // her eyes follow the cursor: where it is, measured from her face (about an eighth of the way down her frame)
     const r = $('#sprite-hero').getBoundingClientRect(), fx = r.left + r.width / 2, fy = r.top + r.height * 0.12;
