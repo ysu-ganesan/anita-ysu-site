@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>YSU · ANITA — she remembers what every AI forgets</title>
+<meta name="description" content="ANITA is a personal AI with a private memory of you. On your phone now. In a robot in your home later.">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="assets/emblem-64.png" sizes="64x64">
+<link rel="icon" href="assets/emblem-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Sora:wght@300;400;600;700&family=Space+Mono&family=Dancing+Script:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<!-- three.js, the same build the Sprite demo uses; only loaded when the walk comes near -->
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+</head>
+<!-- YSU site: the ANITA site (claim → proof beats, the forget node, her memory map)
+     and the Sprite demo (J's 2D ANITA, her voice, the walk, the palette), made into one
+     page. References, section by section:
+       cursor + sphere ........ ausdata.ai
+       hero ................... lobod.rocks (Akshata's pick)
+       headline reveals ....... techredux.co (masked line slide-up, released by the gate)
+       the walk ............... unitedcarriers.com (scroll-scrubbed journey, live speed)
+       early access ........... why.zero.university (pill that opens into a panel)
+       footer ................. spur.us (link hover that leaves a trail) -->
+<body class="is-locked pre-real">
+
+<!-- the page's fixed back layer: her memory, one sphere behind everything -->
+<canvas id="sphere" aria-hidden="true"></canvas>
+<div class="grain" aria-hidden="true"></div>
+<div class="progress" aria-hidden="true"><i id="progress"></i></div>
+
+<!-- the particle ANITA from the ANITA site (gateswarm.js): she stands where the real ANITA will, breaks apart
+     under the cursor, and becomes the real ANITA when you choose how to come in -->
+<canvas id="gate-swarm" aria-hidden="true"></canvas>
+<!-- ═════════════════ the gate (techredux: the headline waits for you to come in) -->
+<div class="gate" id="gate">
+  <div class="gate-col">
+    <div class="gate-brand gi" style="--gi:0"><img src="assets/emblem-192.png" alt="" width="40" height="40"><span>ANITA</span></div>
+    <div class="k gi" style="--gi:1">Personal AI · private memory</div>
+    <h1 class="gate-h gi" style="--gi:2">She’s ready to <em>meet&nbsp;you.</em></h1>
+    <p class="gate-lede gi" style="--gi:3">Come in with sound and she’ll say hello. Or come in quietly and read at your own pace.</p>
+    <div class="gate-load gi" style="--gi:4">
+      <div class="gate-bar"><i id="gatebar"></i></div>
+      <div class="gate-text"><span id="gatetext">gathering her memory</span><b id="gatepct">0%</b></div>
+    </div>
+    <div class="gate-go" id="gatego">
+      <button type="button" class="btn gate-sound" id="enter-sound" data-cursor="with sound"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none"/></svg>Meet her · sound on</button>
+      <button type="button" class="linkish" id="enter-quiet" data-cursor="quietly">or come in quietly</button>
+    </div>
+    <p class="gate-hint" id="gatehint">Move your cursor over her.</p>
+  </div>
+</div>
+
+<header class="nav">
+  <a class="brand" href="#top" data-cursor="top"><img src="assets/emblem-64.png" alt="" width="28" height="28"><span>ANITA</span></a>
+  <nav class="pill" aria-label="Sections">
+    <a href="#remember">Memory</a>
+    <a href="#yours">Privacy</a>
+    <a href="#walk">Robots</a>
+    <a href="#door" class="cta">Early access</a>
+  </nav>
+</header>
+
+<!-- she is speaking: what she says, as words, and a way to stop her -->
+<div class="speaking" id="speaking" hidden>
+  <i class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></i>
+  <p id="saying" aria-live="polite"></p>
+  <button type="button" id="hush" data-cursor="stop">stop</button>
+</div>
+
+<main>
+<!-- ═════════════════ hero (lobod.rocks): words left, her on the right in front of her memory -->
+<section class="hero" id="top">
+  <div class="hero-pin">
+    <div class="atmo" aria-hidden="true"></div>
+    <!-- the reel's method: one Google Flow (Veo) video of her turning her head, scrubbed by the cursor
+         (videotrack.js). Used as soon as assets/anita-look.mp4 exists; until then the sprite version stands in. -->
+    <video class="hero-video" id="hero-video" muted playsinline preload="auto" aria-hidden="true" hidden></video>
+    <div class="hero-copy">
+      <div class="k reveal-fade">ANITA · personal AI</div>
+      <h1 class="split" data-gate>She remembers what every AI <em>forgets.</em></h1>
+      <p class="lede reveal-fade">An assistant for the rest of your life. On your phone now. In a robot in your home later.</p>
+      <div class="row reveal-fade">
+        <button type="button" class="btn" data-join>Get early access</button>
+        <button type="button" class="btn ghost" id="hear" data-cursor="listen">▶ Hear her</button>
+      </div>
+      <p class="note reveal-fade">She will remember you pressed that.</p>
+    </div>
+
+    <!-- beat two (the Sprite demo's "Talk to her"): the opening words leave and a live call plays out
+         beside her while she talks. You even cut her off mid-sentence, because you can. -->
+    <div class="hero-talk" id="hero-talk">
+      <div class="k">Talk to her</div>
+      <h2>Talk to her like a person.</h2>
+      <p class="lede">Full voice, both ways. She listens while she speaks, so you can cut in mid-sentence, like you would with anyone.</p>
+      <div class="call">
+        <div class="call-top"><i class="live" aria-hidden="true"></i>On a call with ANITA<span class="timer" id="call-t">00:00</span></div>
+        <div class="wave" aria-hidden="true"><i style="--k:0"></i><i style="--k:1"></i><i style="--k:2"></i><i style="--k:3"></i><i style="--k:4"></i><i style="--k:5"></i><i style="--k:6"></i><i style="--k:7"></i><i style="--k:8"></i><i style="--k:9"></i><i style="--k:10"></i><i style="--k:11"></i><i style="--k:12"></i><i style="--k:13"></i><i style="--k:14"></i><i style="--k:15"></i><i style="--k:16"></i><i style="--k:17"></i><i style="--k:18"></i><i style="--k:19"></i><i style="--k:20"></i><i style="--k:21"></i><i style="--k:22"></i><i style="--k:23"></i><i style="--k:24"></i><i style="--k:25"></i><i style="--k:26"></i><i style="--k:27"></i><i style="--k:28"></i><i style="--k:29"></i><i style="--k:30"></i><i style="--k:31"></i></div>
+        <ol class="call-lines">
+          <li class="c-you" data-at="0.40">What was I stressed about this week?</li>
+          <li class="c-her" data-at="0.52">Three things. The investor deck on Tuesday, the revenue numbers in it that were from—</li>
+          <li class="c-you cut" data-at="0.62">Right, the numbers. Remind me tonight.</li>
+          <li class="c-her" data-at="0.72">Tonight at eight. And your mum’s birthday is on the 15th. Still no gift.</li>
+        </ol>
+      </div>
+      <div class="proof">Full-duplex voice · a voice you choose · wake word</div>
+    </div>
+
+    <div class="her" id="her-hero">
+      <div class="pool" aria-hidden="true"></div>
+      <canvas class="sprite" id="sprite-hero" aria-label="ANITA, standing" role="img"></canvas>
+      <div class="drag" id="drag" data-cursor="drag her memory" aria-hidden="true"></div>
+    </div>
+
+    <!-- memories floating around her, like lobod's glass chips -->
+    <div class="chips" aria-hidden="true">
+      <div class="chip" style="--x:78vw;--y:14vh;--d:7s"><b>Fri</b>Mum's birthday is the 15th. No gift yet.</div>
+      <div class="chip" style="--x:80vw;--y:40vh;--d:8.5s"><b>Mon</b>You are busier on Mondays.</div>
+      <div class="chip" style="--x:77vw;--y:66vh;--d:9s"><b>Tue</b>Subtitles annoy you. Dubbed it is.</div>
+    </div>
+    <div class="cue" aria-hidden="true">scroll</div>
+  </div>
+</section>
+
+<!-- ═════════════════ the vow and her memory: one scene, pinned while you scroll.
+     "No more sorry, I forgot" zooms until you pass through it; the memory heading emerges from that zoom;
+     then it moves up and the four moments appear one at a time in the same place: each plays its conversation,
+     then dissolves into a node that flies into her memory, the sphere behind. (main.js → the mind scene) -->
+<section class="mind" id="remember">
+  <div class="mind-pin" id="mind-pin">
+    <div class="vow-line" id="vow-line">
+      <h2>No more “sorry, I&nbsp;forgot.”</h2>
+      <p class="lede">She remembers everything for you. <b>Privately.</b></p>
+    </div>
+    <div class="mind-head" id="mind-head">
+      <div class="k">Her memory of you</div>
+      <h2>Ask her what you were worried about last&nbsp;Tuesday.</h2>
+      <p class="lede">Every conversation, person, plan and decision, kept in a five-layer memory and brought back exactly when you need it.</p>
+      <div class="mind-foot">
+        <button type="button" class="btn ghost small" data-voice="memory" data-cursor="listen">▶ She explains</button>
+        <div class="counts" aria-live="off"><b id="n-kept">0</b> <span id="n-word">memories</span> kept on this page</div>
+      </div>
+    </div>
+  <ol class="moment-list">
+    <li class="moment" data-kept="Your name is Maya.">
+      <div class="m-top"><div class="m-day">Day 1</div><h3>She starts remembering the moment you speak.</h3></div>
+      <div class="chat">
+        <p class="you" data-type="Call me Maya."></p>
+        <p class="her-say">Maya. Kept.</p>
+        <p class="kept"><i></i>Your name is Maya.<span>a new node on her map</span></p>
+      </div>
+    </li>
+    <li class="moment" data-kept="You are busier on Mondays.">
+      <div class="m-top"><div class="m-day">Day 29</div><h3>She notices things you never told her.</h3></div>
+      <div class="chat">
+        <p class="you" data-type="I don't want to go to work."></p>
+        <p class="her-say">It's Monday. You always say that — and you always go anyway. You've got this.</p>
+        <p class="kept"><i></i>You are busier on Mondays.<span>she worked this one out herself</span></p>
+      </div>
+    </li>
+    <li class="moment" data-kept="Mum · pottery · birthday in two weeks">
+      <div class="m-top"><div class="m-day">Day 64</div><h3>She remembers what you said once.</h3></div>
+      <div class="chat">
+        <p class="you" data-type="What should I get Mum for her birthday?"></p>
+        <p class="her-say">She talked about a pottery class three times last month. Her birthday is in two weeks.</p>
+        <p class="kept"><i></i>Mum · pottery · the 15th<span>three mentions, joined up</span></p>
+      </div>
+    </li>
+    <li class="moment" data-kept="Dubbed, never subtitles.">
+      <div class="m-top"><div class="m-day">Day 90</div><h3>She knows what's new. And what you like.</h3></div>
+      <div class="chat">
+        <p class="you" data-type="What should I watch tonight?"></p>
+        <p class="her-say">The new season came out today. Watch it dubbed — you told me subtitles annoy you.</p>
+        <p class="kept"><i></i>Dubbed, never subtitles.<span>kept since day 12</span></p>
+      </div>
+    </li>
+  </ol>
+  </div>
+</section>
+
+<!-- ═════════════════ private: the one thing on the page you do yourself -->
+<section class="yours" id="yours">
+  <div class="yours-copy">
+    <div class="k">Private by design</div>
+    <h2 class="split">You choose what she&nbsp;forgets.</h2>
+    <p class="lede reveal-fade">The memory is yours alone. It stays on your device and on hardware you control, never in a cloud that trains on your life. One switch keeps everything on the phone.</p>
+    <div class="proof reveal-fade">Local-first · runs on your machine · nothing sold, nothing trained on you</div>
+    <button type="button" class="btn ghost small reveal-fade" data-voice="yours" data-cursor="listen">▶ She promises</button>
+  </div>
+  <div class="forget-wrap">
+    <svg class="web" viewBox="0 0 300 220" aria-hidden="true">
+      <line x1="40" y1="40" x2="150" y2="110"/><line x1="70" y1="190" x2="150" y2="110"/><line x1="250" y1="46" x2="150" y2="110"/><line x1="262" y1="176" x2="150" y2="110"/>
+      <line class="far" x1="40" y1="40" x2="250" y2="46"/><line class="far" x1="70" y1="190" x2="262" y2="176"/><line class="far" x1="40" y1="40" x2="70" y2="190"/>
+      <rect x="37" y="37" width="6" height="6"/><rect x="67" y="187" width="6" height="6"/><rect x="247" y="43" width="6" height="6"/><rect x="259" y="173" width="6" height="6"/>
+    </svg>
+    <button type="button" class="forget" id="forget" data-cursor="cut the thread">
+      <i class="dot" aria-hidden="true"></i>
+      <span class="f-label"><b>You are busier on Mondays.</b><span>tap once and the thread is cut</span></span>
+    </button>
+    <p class="forgotten" id="forgotten" aria-live="polite"></p>
+    <button type="button" class="linkish again" id="remember-again" hidden>let her learn it again</button>
+  </div>
+</section>
+
+<!-- ═════════════════ the walk (unitedcarriers): scroll moves her down the road, phone → home.
+     Behind her: the Sprite demo's world (city.js), the Tron grid and J's city.
+     The drawn road (#road) is the stand-in when WebGL is not there. -->
+<section class="walk" id="walk">
+  <div class="walk-pin">
+    <canvas id="city" aria-hidden="true"></canvas>
+    <canvas id="road" aria-hidden="true"></canvas>
+    <div class="walk-her"><canvas class="sprite" id="sprite-walk" role="img" aria-label="ANITA walking toward you"></canvas></div>
+    <div class="walk-head">
+      <div class="k">Why a robotics company built this first</div>
+      <h2 class="split">She will not stay on your&nbsp;phone.</h2>
+    </div>
+    <ol class="signs" aria-label="Her road">
+      <li data-at="0.10"><b>Today</b>Your phone. She gets to know you on the device you already carry.</li>
+      <li data-at="0.38"><b>Every day</b>Same memory, growing. Five layers of it, all yours.</li>
+      <li data-at="0.66"><b>Tomorrow</b>A robot in your home is only as good as what it knows about you.</li>
+      <li data-at="0.90"><b>Home</b>When the body is ready, she moves in. Same memory. Same voice. Same ANITA.</li>
+    </ol>
+    <div class="odo" aria-hidden="true">
+      <div><span>pace</span><b id="pace">0.0</b><i>km/h</i></div>
+      <div><span>phone → home</span><b id="dist">0</b><i>%</i></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════════════ what runs today + not another chatbot -->
+<section class="facts">
+  <div class="k">What runs today</div>
+  <ul class="fact-grid">
+    <li><b data-count="5">0</b><span>layers of memory</span></li>
+    <li><b data-count="3">0</b><span>thinking modes</span></li>
+    <li><b class="word">Full&#8209;duplex</b><span>voice, both ways</span></li>
+    <li><b data-count="1500" data-suffix="+">0</b><span>tests passing</span></li>
+  </ul>
+  <p class="under reveal-fade">The iOS app is in development. Early access opens with it.</p>
+  <ul class="versus">
+    <li class="reveal-fade"><span>Other companions live in someone's cloud.</span><b>ANITA lives with you.</b></li>
+    <li class="reveal-fade"><span>Other assistants start every day from zero.</span><b>ANITA starts from yesterday.</b></li>
+    <li class="reveal-fade"><span>Other AIs are apps.</span><b>ANITA is a brain that will one day have a body.</b></li>
+  </ul>
+</section>
+
+<!-- ═════════════════ early access: the invitation; the button opens why.zero.university's panel -->
+<section class="door" id="door">
+  <h2 class="split">Be one of the first people she&nbsp;remembers.</h2>
+  <p class="lede reveal-fade">Early access opens with the iOS app. You will hear from the founder directly, not from a marketing funnel.</p>
+  <button type="button" class="btn big reveal-fade" data-join>Get early access</button>
+</section>
+</main>
+
+<!-- ═════════════════ footer (spur.us): columns, and a trail left by the hover -->
+<footer class="foot">
+  <div class="foot-grid">
+    <div class="foot-col">
+      <h4>Her</h4>
+      <ul>
+        <li><a href="#remember">Memory</a></li>
+        <li><a href="#yours">Privacy</a></li>
+        <li><a href="#walk">Robots</a></li>
+        <li><button type="button" data-join>Early access</button></li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h4>Follow the build</h4>
+      <ul>
+        <li><a href="https://www.linkedin.com/company/anita-ai" rel="noopener">LinkedIn</a></li>
+        <li><a href="https://github.com/Dee-Nith" rel="noopener">GitHub</a></li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h4>Write to us</h4>
+      <ul>
+        <li><a href="mailto:hello@aneeta.ai">hello@aneeta.ai</a></li>
+      </ul>
+    </div>
+    <div class="foot-col wide">
+      <h4>Built in public</h4>
+      <p>From London and Chennai, by ANITA Artificial Neuro Intelligence Technologies Pvt Ltd.</p>
+    </div>
+  </div>
+  <div class="foot-mark" aria-hidden="true" data-text="ANITA">ANITA</div>
+  <div class="foot-base"><span>© 2026 ANITA</span><span>No tracking on this page.</span></div>
+</footer>
+
+<!-- ═════════════════ the join pill → panel (why.zero.university) -->
+<div class="joinpill" id="joinpill">
+  <button type="button" class="jp-open" id="jp-open" data-join-inline>Get early access</button>
+  <form class="jp-form" id="jp-form" novalidate>
+    <label class="sr" for="jp-email">Your email</label>
+    <input id="jp-email" type="email" inputmode="email" autocomplete="email" placeholder="you@yourmail.com">
+    <button type="submit">Continue</button>
+  </form>
+</div>
+
+<div class="panel" id="panel" role="dialog" aria-modal="true" aria-labelledby="panel-h" hidden>
+  <button type="button" class="panel-x" id="panel-x" aria-label="Close" data-cursor="close">×</button>
+  <div class="panel-in" id="panel-form-side">
+    <div class="panel-left">
+      <h2 id="panel-h" class="split-now script">Be one of the first she gets to&nbsp;know.</h2>
+      <img class="panel-her" src="assets/head-happy.webp" alt="" width="337" height="461">
+    </div>
+    <form class="panel-form" id="signup" novalidate>
+      <input type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true" class="sr">
+      <label class="field"><span>Your name</span><input name="name" autocomplete="given-name" placeholder="What should she call you?" required></label>
+      <label class="field"><span>Your email</span><input id="email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="you@yourmail.com" required></label>
+      <label class="field"><span>Your city <em>(optional)</em></span><input name="city" autocomplete="address-level2" placeholder="London, Chennai, anywhere"></label>
+      <div class="field">
+        <span id="phone-l">Your phone</span>
+        <input type="hidden" name="phone" id="phone" value="iPhone">
+        <div class="drop" id="drop">
+          <button type="button" class="drop-btn" id="drop-btn" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="phone-l drop-btn"><span id="drop-val">iPhone</span><i aria-hidden="true">▾</i></button>
+          <ul class="drop-list" id="drop-list" role="listbox" aria-labelledby="phone-l" tabindex="-1" hidden>
+            <li role="option" aria-selected="true" data-v="iPhone">iPhone</li>
+            <li role="option" aria-selected="false" data-v="Android">Android</li>
+            <li role="option" aria-selected="false" data-v="Both">Both</li>
+          </ul>
+        </div>
+      </div>
+      <label class="field"><span>The first thing she should remember <em>(optional)</em></span><textarea name="first" rows="2" placeholder="I always forget where I put my keys."></textarea></label>
+      <div class="panel-foot">
+        <p class="say" id="say" role="status" aria-live="polite"></p>
+        <button type="submit" class="submit" id="submit"><span id="submit-t">Join early access</span><i class="spin" aria-hidden="true"></i></button>
+      </div>
+    </form>
+  </div>
+  <div class="panel-done" id="panel-done" hidden>
+    <div class="done-step" id="done-1">
+      <h2 class="script" id="done-h">You’re on the list.</h2>
+      <p class="done-p" id="done-p">You will hear from the founder soon. Until then, she will keep your place.</p>
+      <button type="button" class="submit" id="done-next"><span>Continue</span></button>
+    </div>
+    <div class="done-step" id="done-2" hidden>
+      <h2 class="script" id="done2-h">You’re in.</h2>
+      <p class="done-p">Know someone who forgets things? Bring them along.</p>
+      <div class="share-row">
+        <button type="button" class="copy-pill" id="copy-link" data-cursor="copy"><span id="copy-url"></span><b>Copy link</b></button>
+        <button type="button" class="submit" id="share-link"><span>Share</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<noscript><div class="noscript"><img src="assets/anita-still.png" alt="ANITA"><p>ANITA — a personal AI with a private memory of you. Write to hello@aneeta.ai for early access.</p></div></noscript>
+<script type="module" src="main.js"></script>
+<!-- safety net: if main.js never runs, the gate must not keep anyone out of the page -->
+<script>setTimeout(function () { if (!window.__ysu) { var g = document.getElementById('gate'); if (g) g.style.display = 'none'; document.body.classList.remove('is-locked');
+  document.querySelectorAll('.split, .reveal-fade, .chips').forEach(function (el) { el.classList.add('is-in'); }); } }, 6000);</script>
+</body>
+</html>
