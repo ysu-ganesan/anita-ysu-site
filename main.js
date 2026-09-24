@@ -496,7 +496,9 @@ function intoCore() {
   return { x: lerp(from.x, cityCore.x, f), y: lerp(from.y, cityCore.y, f), r: lerp(from.r, cityCore.r, f), alpha: lerp(from.alpha, 1, f) * (1 - memFade) };
 }
 const places = [
-  ['.hero',    () => narrow() ? { x: 0.5, y: 0.66, r: 0.4, alpha: 0.85 } : { x: 0.68, y: 0.52, r: 0.38, alpha: 1 }],
+  ['.hero',    () => narrow() ? { x: 0.5, y: 0.66, r: 0.4, alpha: 0.85 }
+                : HERO === 1 ? { x: lerp(0.5, 0.68, ss(0.1, 0.3, heroP)), y: 0.45, r: 0.4, alpha: 1 }   // design 1: centred, behind the letters
+                : { x: 0.68, y: 0.52, r: 0.38, alpha: 1 }],
   // the mind scene: behind the vow, then behind her memory's heading, filling in as the moments are kept
   ['.mind',    () => ({ x: 0.5, y: 0.5, r: mindP < 0.14 ? 0.46 : 0.4, alpha: mindP < 0.14 ? 0.3 : 0.5 })],
   ['.yours',   inYours],
@@ -529,6 +531,12 @@ function placeSphere() {
 
 // ─────────────────────────────────────────── one clock for everything
 const hero = $('.hero'), heroCopy = $('.hero-copy'), chips = $('.chips'), bar = $('#progress');
+// Hero designs to compare (24 Sep): /?hero=1 is design 1, her name huge behind her. No ?hero = the hero as it was.
+// Desktop only for now; phones keep the current hero.
+const HERO = narrow() ? 0 : +(new URLSearchParams(location.search).get('hero') || 0);
+if (HERO === 1) document.body.classList.add('hero-v1');
+const wordmark = $('#wordmark'), wmLetters = $$('#wordmark span');
+let heroP = 0, wmx = 0, wmy = 0;
 const mind = $('.mind'), vowLine = $('#vow-line'), mindHead = $('#mind-head'), cards = $$('.moment'), played = new Set();
 const mindLede = $('#mind-head .lede'), taken = new Set();
 // one glowing node per moment: what the card becomes as it is taken into her memory
@@ -545,7 +553,18 @@ function frame(now) {
   bar.style.transform = `scaleX(${max > 0 ? (scrollY / max).toFixed(4) : 0})`;
 
   // hero (lobod): copy and chips leave over 6–36% of its scroll, the sphere turns
-  const hr = hero.getBoundingClientRect(), hp = clamp(-hr.top / (hr.height - innerHeight), 0, 1);
+  const hr = hero.getBoundingClientRect(), hp = heroP = clamp(-hr.top / (hr.height - innerHeight), 0, 1);
+  if (HERO === 1) {
+    // design 1: the letters rise in after the gate, drift gently against the cursor (eased, so it floats), and as
+    // the call comes in they spread apart and fade while she glides back to the right to make room for it
+    if (gate.classList.contains('is-gone')) wordmark.classList.add('is-in');
+    const out = ss(0.03, 0.22, hp), move = ss(0.1, 0.3, hp), k = 1 - Math.exp(-dt * 4);
+    wmx += (-mx * 26 - wmx) * k; wmy += (-my * 14 - wmy) * k;
+    wordmark.style.translate = `${wmx.toFixed(1)}px ${(wmy - out * 60).toFixed(1)}px`;
+    wordmark.style.opacity = (1 - out).toFixed(3);
+    wmLetters.forEach((l, i) => { l.style.translate = `${((i - 2) * out * 7).toFixed(2)}vw 0`; });
+    $('#her-hero').style.setProperty('--herx', `${lerp(50, 68, move).toFixed(2)}vw`);
+  }
   if (gate.classList.contains('is-gone')) {
     // beat one's words leave early; beat two (the call) comes in and holds to the end of the hero
     const out = 1 - ss(0.04, 0.2, hp), talkIn = ss(0.24, 0.34, hp);

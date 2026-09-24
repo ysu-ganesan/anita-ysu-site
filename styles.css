@@ -174,6 +174,19 @@ body.pre-real .her { opacity: 0; filter: brightness(2.4) saturate(0) drop-shadow
 .hero-video[hidden] { display: none; }
 .look-video .her { display: none; }
 .sprite { display: block; }
+/* ── hero design 1 (/?hero=1, main.js → HERO): her name, huge, behind her. The letters are glass: thin cyan edges
+   and a faint fill, so her memory graph shows through them. She stands in the middle, in front of them */
+.wordmark { display: none; }
+.hero-v1 .wordmark { display: flex; position: absolute; left: 0; right: 0; top: 11vh; justify-content: center; gap: 1.4vw; z-index: 1; pointer-events: none;
+  font-family: var(--font-display); font-weight: 700; font-size: min(25vw, 44vh); line-height: .8; }
+.hero-v1 .wordmark span { display: block; color: rgba(88,230,255,.05); -webkit-text-stroke: 1.5px rgba(88,230,255,.5); text-shadow: 0 0 70px rgba(88,230,255,.22);
+  opacity: 0; transform: translateY(35%); transition: transform 1.6s var(--ease-out), opacity 1.3s var(--ease-soft); transition-delay: calc(var(--i) * 110ms + .15s); }
+.hero-v1 .wordmark.is-in span { opacity: 1; transform: none; }
+.hero-v1 .her { left: var(--herx, 50vw); }
+.hero-v1 .hero-copy { top: auto; bottom: 12vh; transform: none; max-width: min(30vw, 440px); }
+.hero-v1 .hero-copy h1 { font-size: clamp(1.7rem, 2.7vw, 2.7rem); }
+.hero-v1 .hero-copy .k { margin-bottom: 1em; }
+.hero-v1 .hero-copy .lede { font-size: .95rem; }
 /* ?3d: her sprite laid on a surface shaped like her (her3d.js). The canvas is a little bigger than her frame so a
    turn is never clipped; the flat sprite keeps drawing underneath, unseen, because it is what the surface shows */
 .her .her3d { position: absolute; left: -25%; top: -8%; width: 150%; height: 108%; pointer-events: none; }
