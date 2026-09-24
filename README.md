@@ -37,6 +37,15 @@ Open http://127.0.0.1:8791/. It needs internet only for the Google Fonts.
 
 The sprite sheets in `assets/sprites/` are J's, re-packed at 450×800 per frame. The originals are 720×1280 and decode to about 240 MB per page. The format is the same as the kit's README describes. The talk clip loads after you enter, and the walk clip loads when the road is near.
 
+## ANITA in 3D (try it: http://127.0.0.1:8791/?3d)
+
+Dee's approved ANITA, exactly as drawn, standing in depth like a person. Without `?3d` the page is unchanged.
+
+- J's sprite keeps drawing every frame (her own head-and-eye following, nod and talking), hidden, and `her3d.js` lays that canvas on a 3D surface shaped like her body.
+- The shape is `assets/sprites/depth-idle.png`, a depth map of her master frame made on this laptop with Depth Anything V2 Small (free, Apache-2.0; nothing was uploaded). Her head is evened out so it turns as one piece, like a skull. Landmarks (chin, neck, shoulders, knees) are in `depth-idle.json`.
+- She turns like a person: her eyes lead (J's frames), her head follows on her neck in about 0.3 s, her shoulders come round after (about 1 s), her feet stay put. Standing still she drifts a little. The camera is orthographic, so facing you she is pixel for pixel the flat sprite.
+- Strength is set at the top of `her3d.js` (`DEPTH`, `HEAD_YAW`, `BODY_YAW`, nod, `RIM`). If the browser ever drops the 3D surface, the flat sprite shows again at once.
+
 ## Before it goes live
 
 - **Sign-ups:** `SIGNUP_ENDPOINT` at the top of `main.js` is empty, so the form opens a pre-filled email to `hello@aneeta.ai`. Point it at a list that accepts `POST` JSON `{ name, email, city, phone, first }`.

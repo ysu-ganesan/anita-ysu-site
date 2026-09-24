@@ -93,8 +93,14 @@ fetch(LOOK.src, { method: 'HEAD' }).then(r => {
   document.body.classList.add('look-video');
   look = new VideoTrack(v, LOOK);
 }, () => {});
-if (location.search.includes('debug')) Object.assign(window, { __hero: heroHer, __walk: walkHer });   // for testing only
+if (location.search.includes('debug')) Object.assign(window, { __hero: heroHer, __walk: walkHer, __her3d: () => her3d });   // for testing only
 if (reduce) heroHer.speed = walkHer.speed = 0;   // she stands still for people who asked for less motion
+// ?3d: the same ANITA, standing in depth (her3d.js). Try it at /?3d; without it the page is unchanged.
+let her3d = null;
+if (new URLSearchParams(location.search).has('3d')) import('./her3d.js').then(m => {
+  her3d = new m.Her3D($('#sprite-hero'), $('#her-hero'), { still: reduce });
+  her3d.onready = () => document.body.classList.add('has-her3d');
+}).catch(() => {});
 
 // only one of her is ever drawn: whichever stage is on screen (J's first rule)
 const onScreen = new Set();
@@ -609,6 +615,7 @@ function frame(now) {
     const nx = (ptr.x - fx) / Math.max(80, ptr.x < fx ? fx : innerWidth - fx), ny = (ptr.y - fy) / Math.max(80, ptr.y < fy ? fy : innerHeight - fy);
     heroHer.look(clamp(nx, -1, 1), clamp(ny, -1, 1), ptr.on && hp < 0.2);   // she watches you, then turns to face forward before the call starts
     heroHer.update(dt);
+    if (her3d) her3d.update(dt, t, clamp(nx, -1, 1), clamp(ny, -1, 1), ptr.on && hp < 0.2 && !reduce);
   }
   const wr = walkSec.getBoundingClientRect();
   if (wr.top < innerHeight && wr.bottom > 0) {
