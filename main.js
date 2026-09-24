@@ -8,7 +8,7 @@ import { Anita } from './sprite.js';
 import { MemorySphere } from './sphere.js';
 import { MemoryGraph } from './graph.js';
 import { startCursor } from './cursor.js';
-import { VideoTrack, PoseTrack, poseTime } from './videotrack.js';
+import { VideoTrack, PlayTrack, poseTime } from './videotrack.js';
 
 // The reel's cursor-tracking method. Drop the Google Flow video at LOOK.src and the hero uses it: the cursor's
 // position along LOOK.axis scrubs it (left edge of the screen = its first frame, right edge = its last). from/to
@@ -22,7 +22,7 @@ const LOOK = { src: 'assets/anita-look.mp4', axis: 'horizontal', from: 0, to: nu
 // [seconds, x, y] (x: -1 screen left … 1 right, y: -1 up … 1 down): at you, up, up-right, turning right,
 // crouching to look down, rising back to you. null skips 4.9–5.5 s, where the take glitches (a ghost arm).
 // The cursor picks the nearest pose (videotrack.js → poseTime). Delete this line to go back to J's sprite.
-const FLOW_HER = { src: 'assets/anita-flow.webm', gaps: [[4.9, 5.5]], jump: 0.9, ease: 6,
+const FLOW_HER = { src: 'assets/anita-flow.webm', rev: 'assets/anita-flow-rev.webm',   // rev: the same take played backwards
   poses: [[0, 0, 0], [0.5, 0, -0.7], [1, 0.2, -0.9], [1.5, 0.25, -0.8], [2, 0.55, -0.3], [2.25, 0.6, -0.2],
           [2.5, 0.45, 0], [3, 0.75, 0], [3.5, 0.9, 0.05], [4, 0.8, 0.4], [4.25, 0.6, 0.6], [4.75, 0.3, 0.9], null,
           [5.5, 0.1, 1], [6, -0.1, 1], [6.5, -0.3, 0.8], [7, -0.3, 0.5], [7.5, -0.1, 0.2], [7.9, 0, 0.1]] };
@@ -109,13 +109,13 @@ fetch(LOOK.src, { method: 'HEAD' }).then(r => {
 let flowHer = null;
 const vp9alpha = document.createElement('video').canPlayType('video/webm; codecs="vp9"') && !/^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 if (typeof FLOW_HER !== 'undefined' && vp9alpha) {
-  const mk = () => { const v = document.createElement('video'); v.className = 'sprite flow-her'; v.src = FLOW_HER.src; v.setAttribute('aria-hidden', 'true'); return v; };
-  const a = mk(), b = mk();
+  const mk = src => { const v = document.createElement('video'); v.className = 'sprite flow-her'; v.src = src; v.setAttribute('aria-hidden', 'true'); return v; };
+  const a = mk(FLOW_HER.src), b = mk(FLOW_HER.rev);
   a.addEventListener('loadeddata', () => { document.body.classList.add('has-flow-her'); }, { once: true });
   $('#sprite-hero').after(a, b);
-  flowHer = new PoseTrack(a, b, FLOW_HER);
+  flowHer = new PlayTrack(a, b);
 }
-if (location.search.includes('debug')) Object.assign(window, { __hero: heroHer, __walk: walkHer });   // for testing only
+if (location.search.includes('debug')) Object.assign(window, { __hero: heroHer, __walk: walkHer, __flow: () => flowHer });   // for testing only
 if (reduce) heroHer.speed = walkHer.speed = 0;   // she stands still for people who asked for less motion
 
 // only one of her is ever drawn: whichever stage is on screen (J's first rule)

@@ -76,3 +76,44 @@ export class PoseTrack extends VideoTrack {
     if (!this.video.seeking && Math.abs(this.video.currentTime - this.time) > 1 / 60) this.video.currentTime = this.time;
   }
 }
+
+// 24 Sep, second go: seeking frame by frame looked like a flip-book, not a person. So she is never seeked
+// while she moves: the take PLAYS toward the pose, forwards from one copy or backwards from a reversed copy
+// (browsers cannot play backwards), faster the further she has to go, and stops on it. Seeking only happens
+// out of sight, to line the other copy up on the same frame for when she next changes direction.
+//   const her = new PlayTrack(fwd, rev, { maxRate: 2.2 });
+//   her.aimTime(seconds); her.tick(dt);
+export class PlayTrack {
+  constructor(fwd, rev, { maxRate = 2.2, minRate = 0.5 } = {}) {
+    Object.assign(this, { fwd, rev, maxRate, minRate });
+    this.want = 0; this.dir = 1; this.busy = false; this.ready = false;
+    for (const v of [fwd, rev]) { v.muted = true; v.playsInline = true; v.preload = 'auto'; v.pause(); }
+    fwd.classList.add('is-row'); rev.classList.remove('is-row');
+    const ok = () => { if (fwd.readyState >= 1 && rev.readyState >= 1 && !this.ready) { this.ready = true; this.D = fwd.duration; this._line(); } };
+    fwd.addEventListener('loadedmetadata', ok); rev.addEventListener('loadedmetadata', ok); ok();
+  }
+  get on() { return this.dir > 0 ? this.fwd : this.rev; }
+  get off() { return this.dir > 0 ? this.rev : this.fwd; }
+  // where she is, in the forward take's time
+  now() { return this.dir > 0 ? this.fwd.currentTime : this.D - this.rev.currentTime; }
+  // put the hidden copy on the frame she is showing
+  _line() { const t = this.now(); this.off.currentTime = Math.min(this.D, Math.max(0, this.dir > 0 ? this.D - t : t)); }
+  aimTime(t) { this.want = t; }
+  tick() {
+    if (!this.ready || this.busy) return;
+    const v = this.on, d = this.want - this.now(), need = Math.sign(d);
+    if (Math.abs(d) < 1 / 30) { if (!v.paused) { v.pause(); this._line(); } return; }
+    // a small step back is not worth turning round for: she holds (so a twitchy cursor cannot make her jitter)
+    if (need !== this.dir && Math.abs(d) < 0.15) { if (!v.paused) { v.pause(); this._line(); } return; }
+    if (need !== this.dir) {
+      // turn around: hold this frame, show the other copy once it sits on the same one
+      if (!v.paused) v.pause();
+      const o = this.off, go = () => { this.dir = need; o.classList.add('is-row'); v.classList.remove('is-row'); this.busy = false; };
+      this.busy = true; this._line();
+      if (o.seeking) o.addEventListener('seeked', go, { once: true }); else go();
+      return;
+    }
+    v.playbackRate = Math.min(this.maxRate, Math.max(this.minRate, Math.abs(d) * 1.6));
+    if (v.paused) v.play().catch(() => {});
+  }
+}

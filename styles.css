@@ -172,8 +172,10 @@ body.pre-real .her { opacity: 0; filter: brightness(2.4) saturate(0) drop-shadow
 .hero-video[hidden] { display: none; }
 .look-video .her { display: none; }
 .sprite { display: block; }
-/* her Flow take in place of the sprite (main.js → FLOW_HER): two copies, a far jump fades one into the other */
-.her .flow-her { opacity: 0; transition: opacity .18s linear; pointer-events: none; }
+/* her Flow take in place of the sprite (main.js → FLOW_HER): a forward and a reversed copy, one shown at a time */
+.her .flow-her { opacity: 0; pointer-events: none; transform-origin: 50% 100%; animation: breathe 4.2s ease-in-out infinite; }
+@keyframes breathe { 50% { transform: scale(1.004, 1.008); } }   /* she breathes while she holds a pose */
+@media (prefers-reduced-motion: reduce) { .her .flow-her { animation: none; } }
 .has-flow-her .her .flow-her.is-row { opacity: 1; }
 .has-flow-her #sprite-hero { visibility: hidden; }
 .pool { position: absolute; left: 50%; bottom: -3vh; width: 170%; height: 16vh; transform: translateX(-50%); pointer-events: none;
