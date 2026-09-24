@@ -17,17 +17,23 @@ import { FlowHer } from './flowher.js';
 // reverse: true if the video turns the other way (right to left).
 const LOOK = { src: 'assets/anita-look.mp4', axis: 'horizontal', from: 0, to: null, reverse: false };
 
-// 24 Sep, by request: in the hero she is a Google Flow take in place of J's sprite, same spot, same size
-// (assets/sprites/Animated_character_moving_eyes_…_20260924140608.mp4: she stands still, only her head and
-// eyes move). Its black was cut out to alpha (anita-flow.webm, VP9; anita-flow-rev.webm is it reversed), so
-// the memory graph still shows around her. The take is a path through her poses, read off its frames as
-// [seconds, x, y] (x: -1 screen left … 1 right, y: -1 up … 1 down): at you, right, up-left, up, down-left,
-// left, back to you. null: her two blinks (≈4 s and ≈7.25 s) are never where she stops, only played through.
-// The cursor picks the nearest pose (videotrack.js → poseTime). Delete this line to go back to J's sprite.
-const FLOW_HER = { sheet: 'assets/anita-flow.webp', meta: 'assets/anita-flow.json',   // every frame, cut out (flowher.js)
-  poses: [[0, 0, 0], [0.5, 0.5, -0.1], [0.75, 0.6, -0.3], [1, 0.1, -0.6], [1.5, -0.3, -0.8], [2.25, -0.2, -1],
-          [3, 0, -1], [3.5, -0.1, -0.95], null, [4.25, -0.5, 0.2], [4.75, -0.5, 0.5], [5.5, -0.4, 0.7],
-          [6, -0.6, 0.4], [6.5, -0.6, 0.2], [6.75, -0.3, 0.1], null, [7.5, 0, 0], [7.9, 0, 0]] };
+// 24 Sep, by request: in the hero she is two Google Flow takes combined, in place of J's sprite, same spot, same
+// size. Both start from the same picture, so their frames line up. Their black was cut out and every frame packed
+// into one sheet (assets/anita-flow.webp, 12 fps; flowher.js draws it), so the memory graph shows around her.
+// Each take is a path through her poses, read off its frames as [seconds, x, y] (x: -1 screen left … 1 right,
+// y: -1 up … 1 down); null: a blink, played through but never stopped on. The cursor's direction from her face
+// picks the nearest pose on either take. Delete this line to go back to J's sprite.
+const FLOW_HER = { sheet: 'assets/anita-flow.webp', meta: 'assets/anita-flow.json', takes: [
+  // Animated_character_moving_eyes_…_20260924140608: at you, right, up-right, (blink) left, down-left, at you
+  [[0, 0, 0], [0.5, 0.6, 0], [1, 0.7, -0.3], [1.5, 0.5, -0.85], [2.5, 0.45, -0.95], [3.5, 0.45, -0.9], null,
+   [4, -0.7, -0.1], [4.5, -0.6, 0], [5, -0.5, 0.45], [5.5, -0.5, 0.55], [6, -0.45, 0.5], [6.5, -0.4, 0.4],
+   [7, -0.05, 0.2], null, [7.5, 0, 0.05], [7.9, 0, 0]],
+  // Woman_moving_head_and_eyes_20260924134404, its first 2.6 s only (after that she turns and crouches):
+  // at you, up-right, straight up, right and up
+  [[0, 0, 0], [0.125, 0.25, -0.1], [0.25, 0.3, -0.3], [0.5, 0.3, -0.65], [0.75, 0.35, -0.85], [1, 0.3, -0.9],
+   [1.25, 0.05, -0.95], [1.5, 0, -0.95], [1.75, 0.3, -0.8], [2, 0.65, -0.55], [2.25, 0.7, -0.5], [2.5, 0.5, -0.2],
+   [2.6, 0.35, -0.05]],
+] };
 
 window.__ysu = true;   // tells the safety net in index.html that the page came up
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
