@@ -77,6 +77,7 @@ const sphere = new MemorySphere($('#sphere'), { named: [
   'Worried about the deck · Tue', 'Happier on days you run', 'Keys: by the door',
 ] });
 sphere.grab($('#drag'));
+sphere.at.inside = sphere.want.inside = 0;   // hero design 5 takes the graph's camera inside it
 // the ANITA site's 3D memory graph takes the sphere's place once three.js is in, and travels the page like palmo's can
 const graph = new MemoryGraph($('#graph'), $('#graph-labels'), sphere);
 
@@ -487,6 +488,11 @@ $$('.foot li a, .foot li button').forEach(a => { const s = document.createElemen
 
 // ─────────────────────────────────────────── where the sphere sits, section by section
 // (the 3D memory graph, graph.js, glides between these like palmo.co.in's can, a little brighter than the sphere was)
+// design 5: from inside her memory (filling the screen, among the nodes) back to its place behind her
+function pullBack() {
+  const k = ss(0.01, 0.16 * 0.85, heroP);
+  return { x: lerp(0.5, 0.68, k), y: lerp(0.5, 0.52, k), r: lerp(0.6, 0.38, k), alpha: 1, inside: 1 - k };
+}
 const inYours = () => narrow() ? { x: 0.5, y: 0.7, r: 0.3, alpha: 0.3 } : { x: 0.74, y: 0.5, r: 0.3, alpha: 0.55 };
 // Into the walk (24 Sep, by request): it does not shrink away any more. As the walk rises, the graph flies from
 // its place in "You choose what she forgets" into HQ's brain core, landing where the core's copy of it is on
@@ -499,6 +505,7 @@ function intoCore() {
 }
 const places = [
   ['.hero',    () => narrow() ? { x: 0.5, y: 0.66, r: 0.4, alpha: 0.85 }
+                : HERO === 5 ? pullBack()
                 : HERO === 1 ? { x: lerp(0.5, 0.68, ss(0.1, 0.3, heroP)), y: 0.45, r: 0.4, alpha: 1 }   // design 1: centred, behind the letters
                 : { x: 0.68, y: 0.52, r: 0.38, alpha: 1 }],
   // the mind scene: behind the vow, then behind her memory's heading, filling in as the moments are kept
@@ -516,9 +523,9 @@ function placeSphere() {
   // the copy in the core comes in once the travelling graph has landed, and stays for the walk
   memFade = city && cityCore && graph.on ? ss(0.7, 0.78, walkEnter) : 0;
   let here = null;
-  for (const [el, f] of places) { const r = el.getBoundingClientRect(); if (r.top <= mid && r.bottom > mid) { Object.assign(sphere.want, f()); here = el; break; } }
+  for (const [el, f] of places) { const r = el.getBoundingClientRect(); if (r.top <= mid && r.bottom > mid) { Object.assign(sphere.want, { inside: 0 }, f()); here = el; break; } }
   const diving = here === walkSec && !!city && !!cityCore && graph.on;
-  sphere.ease = diving ? 14 : 3.2;   // the dive keeps up with the scroll; everywhere else it glides
+  sphere.ease = diving || (HERO === 5 && here === hero && heroP < 0.2) ? 14 : 3.2;   // scroll-driven travel keeps up with the scroll   // the dive keeps up with the scroll; everywhere else it glides
   // the walk's 3D city is opaque: wherever it reaches the graph (rising under it in "You choose what she forgets",
   // the dive, scrolling back up, leaving) the graph is lifted over the page, so it is never cut off by the black.
   // Never while it is settled in the core (it is not drawn then)
@@ -529,6 +536,8 @@ function placeSphere() {
   if (!city && w.top <= 0 && w.bottom >= innerHeight) Object.assign(sphere.at, sphere.want);
   const doorTop = $('.door').getBoundingClientRect().top;
   sphere.grow = doorTop < innerHeight ? 1 : clamp(0.22 + kept * 0.16, 0, 0.9);
+  // design 5: inside her memory it is full of you; it settles back to what she knows so far as you pull out
+  if (HERO === 5 && heroP < 0.2) sphere.grow = lerp(0.85, sphere.grow, ss(0.01, 0.16 * 0.85, heroP));
 }
 
 // ─────────────────────────────────────────── one clock for everything
@@ -539,6 +548,8 @@ const HERO = narrow() ? 0 : +(new URLSearchParams(location.search).get('hero') |
 if (HERO === 1) document.body.classList.add('hero-v1');
 if (HERO === 2) document.body.classList.add('hero-v2');
 if (HERO === 4) document.body.classList.add('hero-v4');
+if (HERO === 5) document.body.classList.add('hero-v5');   // design 5: inside her memory, then the pull-back
+const INTRO = HERO === 5 ? 0.16 : 0;   // the share of the hero's scroll the pull-back takes; the rest plays as before
 // design 4: a day with her. Her notes are the site's own memories of Maya
 const DAY = [
   { at: 7 * 60 + 40,  day: 'Monday',   text: 'Morning. You’re busier on Mondays, so I moved your 9:00 to 9:30.' },
@@ -588,7 +599,17 @@ function frame(now) {
   bar.style.transform = `scaleX(${max > 0 ? (scrollY / max).toFixed(4) : 0})`;
 
   // hero (lobod): copy and chips leave over 6–36% of its scroll, the sphere turns
-  const hr = hero.getBoundingClientRect(), hp = heroP = clamp(-hr.top / (hr.height - innerHeight), 0, 1);
+  const hr = hero.getBoundingClientRect(), hpAll = heroP = clamp(-hr.top / (hr.height - innerHeight), 0, 1);
+  // design 5: the first part of the scroll is the pull-back out of her memory; the hero's own beats follow it
+  const hp = INTRO ? clamp((hpAll - INTRO) / (1 - INTRO), 0, 1) : hpAll;
+  let introK = 1;
+  const pull = INTRO ? ss(0.01, INTRO * 0.85, hpAll) : 1;   // 0 inside her memory → 1 out, behind her
+  if (INTRO) {
+    $('#inside-line').classList.toggle('on', gate.classList.contains('is-gone') && pull < 0.15);
+    const her = ss(0.45, 0.85, pull), words = ss(0.7, 1, pull);
+    $('#her-hero').style.opacity = her.toFixed(3);
+    introK = words;
+  }
   if (HERO === 4) dayTick(dt, hp);
   if (HERO === 1) {
     // design 1: the letters rise in after the gate, drift gently against the cursor (eased, so it floats), and as
@@ -604,10 +625,10 @@ function frame(now) {
   if (gate.classList.contains('is-gone')) {
     // beat one's words leave early; beat two (the call) comes in and holds to the end of the hero
     const out = 1 - ss(0.04, 0.2, hp), talkIn = ss(0.24, 0.34, hp);
-    heroCopy.style.opacity = out.toFixed(3);
+    heroCopy.style.opacity = (out * introK).toFixed(3);
     heroCopy.style.translate = `0 ${(-hp * 120).toFixed(1)}px`;
-    heroCopy.style.visibility = out < 0.01 ? 'hidden' : '';
-    chips.style.opacity = out.toFixed(3);
+    heroCopy.style.visibility = out * introK < 0.01 ? 'hidden' : '';
+    chips.style.opacity = (out * introK).toFixed(3);
     heroTalk.style.opacity = talkIn.toFixed(3);
     heroTalk.style.translate = `0 ${((1 - talkIn) * 40).toFixed(1)}px`;
     heroTalk.classList.toggle('is-on', talkIn > 0.5);

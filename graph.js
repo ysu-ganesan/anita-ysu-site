@@ -181,10 +181,13 @@ export class MemoryGraph {
     }
     // size: the dial's edge sits at r × the screen, the same measure the sphere used
     const tanH = Math.tan(T.MathUtils.degToRad(25));
-    const dist = Math.max(3.2, SHELL * (H / 2) / (Math.max(R, 4) * tanH));
+    // `inside` (0..1, hero design 5): the camera goes into the graph, among her memories, wider-eyed
+    const inside = A.inside || 0, ins = inside * inside * (3 - 2 * inside);
+    const dist = Math.max(3.2, SHELL * (H / 2) / (Math.max(R, 4) * tanH)) * (1 - ins) + 1.45 * ins;   // among the memory nodes (they sit about 2 out), not up against her middle
     const cam = this.cam;
+    cam.fov = 50 + 25 * ins; cam.updateProjectionMatrix();
     cam.aspect = W / H; cam.position.set(0, dist * GRAPH_VIEW[1], dist * GRAPH_VIEW[2]); cam.lookAt(0, 0, 0);
-    cam.far = dist + 20; this.fog.density = 0.075 * 6.2 / dist;   // lighter than map3d's: on the page's black, its fog turned the nodes grey
+    cam.far = dist + 20; this.fog.density = Math.min(0.22, 0.075 * 6.2 / dist);   // lighter than map3d's: on the page's black, its fog turned the nodes grey
     // place: shift the view so the middle of her memory lands on (x, y)
     cam.setViewOffset(W, H, W / 2 - A.x * W, H / 2 - A.y * H, W, H);
 

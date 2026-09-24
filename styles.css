@@ -187,6 +187,13 @@ body.pre-real .her { opacity: 0; filter: brightness(2.4) saturate(0) drop-shadow
 .hero-v1 .hero-copy h1 { font-size: clamp(1.7rem, 2.7vw, 2.7rem); }
 .hero-v1 .hero-copy .k { margin-bottom: 1em; }
 .hero-v1 .hero-copy .lede { font-size: .95rem; }
+/* ── hero design 5 (/?hero=5): inside her memory, then the pull-back (main.js → HERO === 5) */
+.inside-line { display: none; }
+.hero-v5 .inside-line { display: block; position: absolute; left: 50%; bottom: 12vh; transform: translateX(-50%); z-index: 3; margin: 0; pointer-events: none; text-align: center;
+  font-size: clamp(1.1rem, 1.8vw, 1.6rem); color: var(--ink); text-shadow: 0 2px 30px #000; opacity: 0; transition: opacity 1.2s var(--ease-soft); }
+.hero-v5 .inside-line.on { opacity: 1; }
+.hero-v5 .inside-line span { display: block; margin-top: 1.4em; font-family: var(--font-display); font-size: .56rem; letter-spacing: .4em; text-transform: uppercase; color: var(--cyan); }
+.hero-v5 .her { transition: filter 1.6s var(--ease-soft); }
 /* ── hero design 4 (/?hero=4, main.js → DAY): a day with her */
 .day { display: none; }
 .hero-v4 .day { display: block; position: absolute; inset: 0; pointer-events: none; }
