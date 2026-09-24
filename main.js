@@ -543,9 +543,10 @@ function placeSphere() {
 
 // ─────────────────────────────────────────── one clock for everything
 const hero = $('.hero'), heroCopy = $('.hero-copy'), chips = $('.chips'), bar = $('#progress');
-// Hero designs to compare (24 Sep): /?hero=1 is design 1, her name huge behind her. No ?hero = the hero as it was.
-// Desktop only for now; phones keep the current hero.
-const HERO = narrow() ? 0 : +(new URLSearchParams(location.search).get('hero') || 0);
+// Hero designs (24 Sep). Design 1, her name huge behind her, is the hero (Dee's team chose it); the others are kept
+// to compare: /?hero=0 the hero as it was, 2 she forms from specks, 4 a day with her, 5 inside her memory, 6 her in a
+// scene. Phones get 1 (or 0); the others are desktop only.
+const HERO = (() => { const h = +(new URLSearchParams(location.search).get('hero') ?? 1); return narrow() && h > 1 ? 1 : h; })();
 if (HERO === 1) document.body.classList.add('hero-v1');
 if (HERO === 2) document.body.classList.add('hero-v2');
 if (HERO === 4) document.body.classList.add('hero-v4');
@@ -641,7 +642,7 @@ function frame(now) {
     wordmark.style.translate = `${wmx.toFixed(1)}px ${(wmy - out * 60).toFixed(1)}px`;
     wordmark.style.opacity = (1 - out).toFixed(3);
     wmLetters.forEach((l, i) => { l.style.translate = `${((i - 2) * out * 7).toFixed(2)}vw 0`; });
-    $('#her-hero').style.setProperty('--herx', `${lerp(50, 68, move).toFixed(2)}vw`);
+    $('#her-hero').style.setProperty('--herx', `${lerp(50, narrow() ? 50 : 68, move).toFixed(2)}vw`);   // on a phone she stays centred
   }
   if (gate.classList.contains('is-gone')) {
     // beat one's words leave early; beat two (the call) comes in and holds to the end of the hero

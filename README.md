@@ -37,6 +37,12 @@ Open http://127.0.0.1:8791/. It needs internet only for the Google Fonts.
 
 The sprite sheets in `assets/sprites/` are J's, re-packed at 450×800 per frame. The originals are 720×1280 and decode to about 240 MB per page. The format is the same as the kit's README describes. The talk clip loads after you enter, and the walk clip loads when the road is near.
 
+## The hero (design 1, chosen 24 Sep)
+
+Her name, huge, behind her: glass ANITA letters (thin cyan edges, see-through, so her memory graph glows through them), her standing in front of them in the middle, the headline and buttons at the bottom left. The letters rise in one by one after the gate, drift gently against the cursor, and spread apart and fade as the call comes in while she glides to the right. Phones: headline at the top, her centred, her name behind her. Code: `.wordmark` in `index.html`, `.hero-v1` in `styles.css`, `HERO === 1` in `main.js`.
+
+The other designs tried that day are kept to compare: `/?hero=0` the hero before, `2` she forms from specks of her own pixels (`heroform.js`), `4` a day with her, `5` inside her memory then the pull-back, `6` her in a scene (a framed window onto ANITA HQ). Desktop only.
+
 ## ANITA in 3D (try it: http://127.0.0.1:8791/?3d)
 
 Dee's approved ANITA, exactly as drawn, standing in depth like a person. Without `?3d` the page is unchanged.

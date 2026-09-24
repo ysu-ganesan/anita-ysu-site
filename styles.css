@@ -187,6 +187,11 @@ body.pre-real .her { opacity: 0; filter: brightness(2.4) saturate(0) drop-shadow
 .hero-v1 .hero-copy h1 { font-size: clamp(1.7rem, 2.7vw, 2.7rem); }
 .hero-v1 .hero-copy .k { margin-bottom: 1em; }
 .hero-v1 .hero-copy .lede { font-size: .95rem; }
+@media (max-width: 800px) {   /* phones: words at the top as before; her name behind her upper body, as wide as the screen allows */
+  .hero-v1 .wordmark { top: auto; bottom: 29vh; font-size: 18.5vw; gap: 1vw; }
+  .hero-v1 .hero-copy { top: 13vh; bottom: auto; max-width: none; }
+  .hero-v1 .hero-copy h1 { font-size: clamp(2rem, 8.5vw, 2.6rem); }
+}
 /* ── hero design 6 (/?hero=6, main.js → HERO === 6): her in a scene, a framed window onto ANITA HQ */
 .scene { display: none; }
 .hero-v6 .scene { display: block; position: absolute; right: var(--pad); top: 11vh; bottom: 5vh; width: 48vw; z-index: 1; border-radius: 28px; overflow: hidden;
