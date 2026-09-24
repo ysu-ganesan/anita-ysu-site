@@ -6,6 +6,7 @@ const FALLBACK_MAILTO = "hello@aneeta.ai";
 
 import { Anita } from './sprite.js';
 import { MemorySphere } from './sphere.js';
+import { MemoryGraph } from './graph.js';
 import { startCursor } from './cursor.js';
 import { VideoTrack } from './videotrack.js';
 
@@ -76,6 +77,8 @@ const sphere = new MemorySphere($('#sphere'), { named: [
   'Worried about the deck · Tue', 'Happier on days you run', 'Keys: by the door',
 ] });
 sphere.grab($('#drag'));
+// the ANITA site's 3D memory graph takes the sphere's place once three.js is in, and travels the page like palmo's can
+const graph = new MemoryGraph($('#graph'), $('#graph-labels'), sphere);
 
 // ─────────────────────────────────────────── her (J's sprites)
 const heroHer = new Anita($('#sprite-hero'));
@@ -475,16 +478,17 @@ function footGlow(dt) {
 $$('.foot li a, .foot li button').forEach(a => { const s = document.createElement('span'); s.textContent = a.textContent; a.textContent = ''; a.append(s); });
 
 // ─────────────────────────────────────────── where the sphere sits, section by section
+// (the 3D memory graph, graph.js, glides between these like palmo.co.in's can, a little brighter than the sphere was)
 const places = [
   ['.hero',    () => narrow() ? { x: 0.5, y: 0.66, r: 0.4, alpha: 0.85 } : { x: 0.68, y: 0.52, r: 0.38, alpha: 1 }],
   // the mind scene: behind the vow, then behind her memory's heading, filling in as the moments are kept
   ['.mind',    () => ({ x: 0.5, y: 0.5, r: mindP < 0.14 ? 0.46 : 0.4, alpha: mindP < 0.14 ? 0.3 : 0.5 })],
-  ['.yours',   () => narrow() ? { x: 0.5, y: 0.7, r: 0.3, alpha: 0.2 } : { x: 0.74, y: 0.5, r: 0.3, alpha: 0.28 }],
+  ['.yours',   () => narrow() ? { x: 0.5, y: 0.7, r: 0.3, alpha: 0.3 } : { x: 0.74, y: 0.5, r: 0.3, alpha: 0.55 }],
   // on the drawn road the sphere is home on the horizon; in the demo's city the Gateway Arch is, so it steps out
   ['.walk',    () => city ? { x: 0.5, y: 0.3, r: 0.1, alpha: 0 } : { x: 0.5, y: 0.42 - 0.07 - walkP * 0.05, r: 0.05 + walkP * 0.1, alpha: 0.95 }],
-  ['.facts',   () => ({ x: 0.85, y: 0.3, r: 0.3, alpha: 0.12 })],
+  ['.facts',   () => ({ x: 0.85, y: 0.3, r: 0.3, alpha: 0.3 })],
   ['.door',    () => ({ x: 0.5, y: 0.5, r: 0.46, alpha: 0.55 })],
-  ['.foot',    () => ({ x: 0.5, y: 0.9, r: 0.5, alpha: 0.12 })],
+  ['.foot',    () => ({ x: 0.5, y: 0.9, r: 0.5, alpha: 0.22 })],
 ].map(([s, f]) => [$(s), f]);
 function placeSphere() {
   const mid = innerHeight / 2;
@@ -590,7 +594,7 @@ function frame(now) {
   const wr0 = walkSec.getBoundingClientRect(), dr = $('.door').getBoundingClientRect();
   pill.classList.toggle('is-away', (wr0.top < innerHeight * 0.5 && wr0.bottom > innerHeight * 0.5) || dr.top < innerHeight * 0.8);
   placeSphere();
-  sphere.update(dt, t);
+  if (!graph.update(dt, t)) sphere.update(dt, t);
   footGlow(dt);
 
   // her: only one is drawn, and only while she is on screen
