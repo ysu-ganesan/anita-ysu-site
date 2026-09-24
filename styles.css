@@ -179,10 +179,12 @@ body.pre-real .her { opacity: 0; filter: brightness(2.4) saturate(0) drop-shadow
 .wordmark { display: none; }
 .hero-v1 .wordmark { display: flex; position: absolute; left: 0; right: 0; top: 11vh; justify-content: center; gap: 1.4vw; z-index: 1; pointer-events: none;
   font-family: var(--font-display); font-weight: 700; font-size: min(25vw, 44vh); line-height: .8; }
-.hero-v1 .wordmark span { display: block; color: rgba(88,230,255,.05); -webkit-text-stroke: 1.5px rgba(88,230,255,.5); text-shadow: 0 0 70px rgba(88,230,255,.22);
+.hero-v1 .wordmark span { display: block; color: color-mix(in srgb, rgba(88,230,255,.05), var(--ink) calc(var(--solid, 0) * 100%)); -webkit-text-stroke: calc(1.5px * (1 - var(--solid, 0))) rgba(88,230,255,.5); text-shadow: 0 0 70px rgba(88,230,255,.22);
   opacity: 0; transform: translateY(35%); transition: transform 1.6s var(--ease-out), opacity 1.3s var(--ease-soft); transition-delay: calc(var(--i) * 110ms + .15s); }
 .hero-v1 .wordmark.is-in span { opacity: 1; transform: none; }
-.hero-v1 .her { left: var(--herx, 68vw); }   /* the entry screen's place; main.js glides her to the middle */
+.hero-v1 .her { left: var(--herx, 68vw); }
+/* the header's logo waits for her name to fly up into it (desktop; main.js sets --show) */
+@media (min-width: 801px) { .hero-v1 .nav .brand > * { opacity: var(--show, 0); } }   /* the entry screen's place; main.js glides her to the middle */
 .hero-v1 .hero-copy { top: auto; bottom: 12vh; transform: none; max-width: min(30vw, 440px); }
 .hero-v1 .hero-copy h1 { font-size: clamp(1.7rem, 2.7vw, 2.7rem); }
 .hero-v1 .hero-copy .k { margin-bottom: 1em; }
