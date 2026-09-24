@@ -6,18 +6,26 @@
 // Scroll drives it (0 -> 1 across the walk). She starts at HQ's door and walks out of it toward you; HQ, the
 // floor and the city all fall back behind her at her pace. The camera stays at her eye level the whole way.
 // She is not in this scene: she stays the 2D sprite on top, and this returns where her feet and head land.
+//
+// Her memory graph settles into the core (24 Sep, by request): the graph that travels down the page flies into
+// the brain core as this section arrives, and a copy of it (graph.js → buildGraph) takes over here, wrapped
+// around the orb, turned exactly as the travelling one. It stays for the whole walk, receding with HQ.
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { buildGraph, GRAPH_VIEW, GRAPH_SHELL } from './graph.js';
 
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 const lerp = (a, b, t) => a + (b - a) * t;
 const ss = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
 let seed = 7;
 const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+// where her memory graph sits in HQ: the core's orb (the core stands on the hall floor, 0.52 up; its orb is
+// 0.52 of its 11 m up), and how big: its outer dial just inside the core's 3.6 m curtain of light
+const MEM_Y = 0.52 + 11 * 0.52, MEM_SCALE = 1.15;
 
 function textPlane(text, w, h, { font = '700 150px Orbitron, sans-serif', color = '#eaf6f8', glow = '#58e6ff' } = {}) {
   const c = document.createElement('canvas'); c.width = 1024; c.height = Math.round(1024 * h / w);
@@ -128,6 +136,11 @@ function headquarters() {
     glass.opacity = 0.05 * k;
     core.userData.tick(t, late);
   };
+  // her memory graph, round the core's orb. Hidden until the page's travelling graph arrives (render's `mem`)
+  const mem = buildGraph(THREE);
+  mem.world.position.y = MEM_Y; mem.world.scale.setScalar(MEM_SCALE); mem.world.visible = false;
+  mem.world.traverse(o => { if (o.material) o.material.toneMapped = false; });   // its own colours, as on the page
+  g.add(mem.world); g.userData.mem = mem;
   return g;
 }
 
@@ -201,12 +214,17 @@ export function startCity(canvas, base = 'assets/city/') {
   const HQ_START = -44;   // its middle; the front door is 12 m nearer: framed behind her, not filling the screen
 
   const feet = new THREE.Vector3(), head = new THREE.Vector3(), far = new THREE.Vector3();
+  const memAt = new THREE.Vector3(), memDir = new THREE.Vector3(), memP = new THREE.Vector3();
+  const VIEW = new THREE.Vector3(...GRAPH_VIEW).normalize(), memQ = new THREE.Quaternion(), memR = new THREE.Quaternion(), memE = new THREE.Euler();
   let mx = 0, my = 0, smx = 0, smy = 0;
   addEventListener('pointermove', e => { mx = (e.clientX / innerWidth - 0.5) * 2; my = (e.clientY / innerHeight - 0.5) * 2; }, { passive: true });
 
   // enter: 0 while the section is still below the fold, 1 once it fills the screen. It drives the arrival:
   // the camera flies down from high over the city to her eye level while HQ powers up in the dark.
-  return function render(p, dt, enter = 1) {
+  // mem: the travelling graph's state { fade, rx, ry, rz, day, gone }: how present the copy in the core is
+  // (0 → 1 as the travelling one arrives), its turn, and what she knows. Returns, with the rest, `core`: where
+  // the core's graph is on the canvas (x, y, 0..1) and its outer dial's radius in CSS pixels.
+  return function render(p, dt, enter = 1, mem = null) {
     if (canvas.clientWidth !== W || canvas.clientHeight !== H) fit();
     const t = performance.now() / 1000;
     smx += (mx - smx) * 0.06; smy += (my - smy) * 0.06;
@@ -226,9 +244,24 @@ export function startCity(canvas, base = 'assets/city/') {
     camera.position.set(lerp(0, Math.sin(orbit) * dist + smx * 0.35, e), lerp(2.2, 1.05 + smy * -0.15, e), lerp(70, Math.cos(orbit) * dist, e));
     camera.lookAt(0, lerp(2.6, 0.92, e), lerp(hqZ, 0, e));
     camera.updateMatrixWorld();
+    // the graph in the core: turned so this camera sees it as the page's camera sees the travelling one (from
+    // in front and a little above), then as the travelling one is turned
+    const M = hq.userData.mem;
+    memAt.set(0, MEM_Y, hqZ);
+    memDir.copy(camera.position).sub(memAt);
+    const memDist = memDir.length(); memDir.divideScalar(memDist);
+    const shown = !!mem && mem.fade > 0.003;
+    M.world.visible = shown;
+    if (mem) {
+      M.world.quaternion.setFromUnitVectors(VIEW, memDir).multiply(memR.setFromEuler(memE.set(mem.rx, mem.ry, mem.rz)));
+      M.state(dt, t, mem.day, mem.gone, shown ? mem.fade : 0);
+    }
     composer.render(dt);
     feet.set(0, -0.045, 0).project(camera); head.set(0, 1.74 - 0.045, 0).project(camera);
     far.set(camera.position.x, camera.position.y, camera.position.z - 1e4).project(camera);
-    return { feetY: (1 - feet.y) / 2, headY: (1 - head.y) / 2, x: (feet.x + 1) / 2, horizon: clamp((1 - far.y) / 2, 0, 1) };
+    memP.copy(memAt).project(camera);
+    const memR_px = GRAPH_SHELL * MEM_SCALE / (memDist * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2))) * (H / 2);
+    return { feetY: (1 - feet.y) / 2, headY: (1 - head.y) / 2, x: (feet.x + 1) / 2, horizon: clamp((1 - far.y) / 2, 0, 1),
+      core: { x: (memP.x + 1) / 2, y: (1 - memP.y) / 2, r: memR_px } };
   };
 }

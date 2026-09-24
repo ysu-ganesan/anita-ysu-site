@@ -93,7 +93,7 @@ fetch(LOOK.src, { method: 'HEAD' }).then(r => {
   document.body.classList.add('look-video');
   look = new VideoTrack(v, LOOK);
 }, () => {});
-if (location.search.includes('debug')) Object.assign(window, { __hero: heroHer, __walk: walkHer, __her3d: () => her3d });   // for testing only
+if (location.search.includes('debug')) Object.assign(window, { __hero: heroHer, __walk: walkHer, __her3d: () => her3d, __core: () => cityCore, __memFade: () => memFade, __sphere: sphere });   // for testing only
 if (reduce) heroHer.speed = walkHer.speed = 0;   // she stands still for people who asked for less motion
 // ?3d: the same ANITA, standing in depth (her3d.js). Try it at /?3d; without it the page is unchanged.
 let her3d = null;
@@ -108,7 +108,7 @@ const stageSeen = new IntersectionObserver(es => es.forEach(e => e.isIntersectin
 stageSeen.observe($('#her-hero'));   // the walk checks its own rectangle every frame (it needs it for the road anyway)
 // the walk clip, and the Sprite demo's world behind it (three.js), only load when the road is near.
 // If WebGL or the CDN is not there, the drawn road stays and nothing else changes.
-let city = null;
+let city = null, cityCore = null;   // cityCore: where HQ's brain core holds her memory graph on screen (city.js)
 new IntersectionObserver((es, o) => {
   if (!es[0].isIntersecting) return; o.disconnect();
   walkHer.load('idle').then(() => walkHer.load('walk'));
@@ -485,23 +485,40 @@ $$('.foot li a, .foot li button').forEach(a => { const s = document.createElemen
 
 // ─────────────────────────────────────────── where the sphere sits, section by section
 // (the 3D memory graph, graph.js, glides between these like palmo.co.in's can, a little brighter than the sphere was)
+const inYours = () => narrow() ? { x: 0.5, y: 0.7, r: 0.3, alpha: 0.3 } : { x: 0.74, y: 0.5, r: 0.3, alpha: 0.55 };
+// Into the walk (24 Sep, by request): it does not shrink away any more. As the walk rises, the graph flies from
+// its place in "You choose what she forgets" into HQ's brain core, landing where the core's copy of it is on
+// screen and at its size, driven by the scroll (scroll back and it flies back out). Then the copy in the core
+// takes over (memFade) and this one fades: her memory has settled into her central network for the whole walk.
+let memFade = 0, walkEnter = 0;
+function intoCore() {
+  const from = inYours(), f = ss(0.5, 0.72, walkEnter);
+  return { x: lerp(from.x, cityCore.x, f), y: lerp(from.y, cityCore.y, f), r: lerp(from.r, cityCore.r, f), alpha: lerp(from.alpha, 1, f) * (1 - memFade) };
+}
 const places = [
   ['.hero',    () => narrow() ? { x: 0.5, y: 0.66, r: 0.4, alpha: 0.85 } : { x: 0.68, y: 0.52, r: 0.38, alpha: 1 }],
   // the mind scene: behind the vow, then behind her memory's heading, filling in as the moments are kept
   ['.mind',    () => ({ x: 0.5, y: 0.5, r: mindP < 0.14 ? 0.46 : 0.4, alpha: mindP < 0.14 ? 0.3 : 0.5 })],
-  ['.yours',   () => narrow() ? { x: 0.5, y: 0.7, r: 0.3, alpha: 0.3 } : { x: 0.74, y: 0.5, r: 0.3, alpha: 0.55 }],
-  // on the drawn road the sphere is home on the horizon; in the demo's city the Gateway Arch is, so it steps out
-  ['.walk',    () => city ? { x: 0.5, y: 0.3, r: 0.1, alpha: 0 } : { x: 0.5, y: 0.42 - 0.07 - walkP * 0.05, r: 0.05 + walkP * 0.1, alpha: 0.95 }],
+  ['.yours',   inYours],
+  // in the demo's city: into HQ's brain core (above). On the drawn road (no 3D) the sphere is home on the horizon
+  ['.walk',    () => city ? (cityCore && graph.on ? intoCore() : { x: 0.5, y: 0.3, r: 0.1, alpha: 0 }) : { x: 0.5, y: 0.42 - 0.07 - walkP * 0.05, r: 0.05 + walkP * 0.1, alpha: 0.95 }],
   ['.facts',   () => ({ x: 0.85, y: 0.3, r: 0.3, alpha: 0.3 })],
   ['.door',    () => ({ x: 0.5, y: 0.5, r: 0.46, alpha: 0.55 })],
   ['.foot',    () => ({ x: 0.5, y: 0.9, r: 0.5, alpha: 0.22 })],
 ].map(([s, f]) => [$(s), f]);
 function placeSphere() {
-  const mid = innerHeight / 2;
-  for (const [el, f] of places) { const r = el.getBoundingClientRect(); if (r.top <= mid && r.bottom > mid) { Object.assign(sphere.want, f()); break; } }
-  // the walk is a scene of its own: the sphere is home, on the horizon, and snaps there
-  const w = walkSec.getBoundingClientRect();
-  if (w.top <= 0 && w.bottom >= innerHeight) Object.assign(sphere.at, sphere.want);
+  const mid = innerHeight / 2, w = walkSec.getBoundingClientRect();
+  walkEnter = clamp(1 - w.top / innerHeight, 0, 1);
+  // the copy in the core comes in once the travelling graph has landed, and stays for the walk
+  memFade = city && cityCore && graph.on ? ss(0.7, 0.78, walkEnter) : 0;
+  let here = null;
+  for (const [el, f] of places) { const r = el.getBoundingClientRect(); if (r.top <= mid && r.bottom > mid) { Object.assign(sphere.want, f()); here = el; break; } }
+  const diving = here === walkSec && !!city && !!cityCore && graph.on;
+  sphere.ease = diving ? 14 : 3.2;   // the dive keeps up with the scroll; everywhere else it glides
+  // the walk's 3D city is opaque, so while the graph flies in (or back out) it is lifted over the page; never once settled
+  document.body.classList.toggle('graph-over', diving && walkEnter < 1 && sphere.at.alpha > 0.01);
+  // on the drawn road the sphere is home, on the horizon, and snaps there
+  if (!city && w.top <= 0 && w.bottom >= innerHeight) Object.assign(sphere.at, sphere.want);
   const doorTop = $('.door').getBoundingClientRect().top;
   sphere.grow = doorTop < innerHeight ? 1 : clamp(0.22 + kept * 0.16, 0, 0.9);
 }
@@ -630,7 +647,12 @@ function frame(now) {
       // arrival: how far the section has come up the screen (0 → 1). The city flies in and HQ powers up;
       // she appears as the camera reaches her, and the black edge above melts away
       const enter = clamp(1 - wr.top / innerHeight, 0, 1);
-      const s = city(walkP, dt, enter), pin = $('.walk-pin'), PW = pin.clientWidth, PH = pin.clientHeight;
+      const gw = graph.on ? graph.world.rotation : null;
+      const s = city(walkP, dt, enter, gw && { fade: memFade, rx: gw.x, ry: gw.y, rz: gw.z, day: graph.day, gone: graph.gone });
+      const pin = $('.walk-pin'), PW = pin.clientWidth, PH = pin.clientHeight;
+      // where the core holds her graph, in the travelling graph's own terms (share of the screen; r as it measures size)
+      const pr = pin.getBoundingClientRect(), VW = document.documentElement.clientWidth, VH = document.documentElement.clientHeight;
+      cityCore = s.core && { x: (pr.left + s.core.x * PW) / VW, y: (pr.top + s.core.y * PH) / VH, r: s.core.r / Math.min(VW, VH * 1.25) };
       walkHerBox.style.opacity = ss(0.78, 1, enter).toFixed(3);
       pin.style.setProperty('--edge', (1 - ss(0.5, 1, enter)).toFixed(3));
       Object.assign(walkHerBox.style, { top: `${(s.headY * PH).toFixed(1)}px`, height: `${((s.feetY - s.headY) * PH).toFixed(1)}px`, left: `${(s.x * 100).toFixed(2)}%` });
