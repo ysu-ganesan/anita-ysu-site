@@ -33,7 +33,9 @@ export class VideoTrack {
 // as [seconds, x, y] (x: -1 screen left … 1 right, y: -1 up … 1 down); null breaks the path (her one blink).
 // The cursor's place on screen picks the nearest point on that path, and that moment is where the video goes.
 // Height counts a little more than width (wy), so she only leans down when the cursor is clearly low.
-export function poseTime(poses, x, y, wy = 1.5) {
+// `from` (optional) is where the video is now: when two moments show much the same pose (she looks at you at
+// the start and again at the end), the one she can reach sooner wins.
+export function poseTime(poses, x, y, wy = 1.5, from = null) {
   let best = 0, bd = Infinity;
   for (let i = 0; i < poses.length - 1; i++) {
     const a = poses[i], b = poses[i + 1];
@@ -41,7 +43,8 @@ export function poseTime(poses, x, y, wy = 1.5) {
     const dx = b[1] - a[1], dy = (b[2] - a[2]) * wy, px = x - a[1], py = (y - a[2]) * wy;
     const L = dx * dx + dy * dy, u = L ? Math.min(1, Math.max(0, (px * dx + py * dy) / L)) : 0;
     const d = (px - u * dx) ** 2 + (py - u * dy) ** 2;
-    if (d < bd) { bd = d; best = a[0] + u * (b[0] - a[0]); }
+    const t = a[0] + u * (b[0] - a[0]), score = d + (from == null ? 0 : Math.abs(t - from) * 0.02);
+    if (score < bd) { bd = score; best = t; }
   }
   return best;
 }

@@ -16,16 +16,17 @@ import { VideoTrack, PlayTrack, poseTime } from './videotrack.js';
 // reverse: true if the video turns the other way (right to left).
 const LOOK = { src: 'assets/anita-look.mp4', axis: 'horizontal', from: 0, to: null, reverse: false };
 
-// 24 Sep, by request: in the hero she is the Google Flow take (assets/sprites/Woman_moving_head_and_eyes_…mp4)
-// in place of J's sprite, same spot, same size. Its black was cut out to alpha (anita-flow.webm, VP9), so the
-// memory graph still shows around her. The take is a path through her poses, read off its frames as
-// [seconds, x, y] (x: -1 screen left … 1 right, y: -1 up … 1 down): at you, up, up-right, turning right,
-// crouching to look down, rising back to you. null skips 4.9–5.5 s, where the take glitches (a ghost arm).
+// 24 Sep, by request: in the hero she is a Google Flow take in place of J's sprite, same spot, same size
+// (assets/sprites/Animated_character_moving_eyes_…_20260924140608.mp4: she stands still, only her head and
+// eyes move). Its black was cut out to alpha (anita-flow.webm, VP9; anita-flow-rev.webm is it reversed), so
+// the memory graph still shows around her. The take is a path through her poses, read off its frames as
+// [seconds, x, y] (x: -1 screen left … 1 right, y: -1 up … 1 down): at you, right, up-left, up, down-left,
+// left, back to you. null: her two blinks (≈4 s and ≈7.25 s) are never where she stops, only played through.
 // The cursor picks the nearest pose (videotrack.js → poseTime). Delete this line to go back to J's sprite.
-const FLOW_HER = { src: 'assets/anita-flow.webm', rev: 'assets/anita-flow-rev.webm',   // rev: the same take played backwards
-  poses: [[0, 0, 0], [0.5, 0, -0.7], [1, 0.2, -0.9], [1.5, 0.25, -0.8], [2, 0.55, -0.3], [2.25, 0.6, -0.2],
-          [2.5, 0.45, 0], [3, 0.75, 0], [3.5, 0.9, 0.05], [4, 0.8, 0.4], [4.25, 0.6, 0.6], [4.75, 0.3, 0.9], null,
-          [5.5, 0.1, 1], [6, -0.1, 1], [6.5, -0.3, 0.8], [7, -0.3, 0.5], [7.5, -0.1, 0.2], [7.9, 0, 0.1]] };
+const FLOW_HER = { src: 'assets/anita-flow.webm', rev: 'assets/anita-flow-rev.webm',
+  poses: [[0, 0, 0], [0.5, 0.5, -0.1], [0.75, 0.6, -0.3], [1, 0.1, -0.6], [1.5, -0.3, -0.8], [2.25, -0.2, -1],
+          [3, 0, -1], [3.5, -0.1, -0.95], null, [4.25, -0.5, 0.2], [4.75, -0.5, 0.5], [5.5, -0.4, 0.7],
+          [6, -0.6, 0.4], [6.5, -0.6, 0.2], [6.75, -0.3, 0.1], null, [7.5, 0, 0], [7.9, 0, 0]] };
 
 window.__ysu = true;   // tells the safety net in index.html that the page came up
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
@@ -623,7 +624,7 @@ function frame(now) {
   if (flowHer) {
     // she follows the cursor while the first beat is up, then turns back to you for the call
     const on = ptr.on && !reduce && hp < 0.2, gx = on ? (ptr.x / innerWidth) * 2 - 1 : 0, gy = on ? (ptr.y / innerHeight) * 2 - 1 : 0;
-    flowHer.aimTime(poseTime(FLOW_HER.poses, gx, gy)); flowHer.tick(dt);
+    flowHer.aimTime(poseTime(FLOW_HER.poses, gx, gy, 1.5, flowHer.ready ? flowHer.now() : null)); flowHer.tick(dt);
   }
   if (look) {
     // the reel's slider: where the cursor sits across the screen is where she looks; no cursor, she looks ahead
