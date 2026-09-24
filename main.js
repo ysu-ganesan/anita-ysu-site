@@ -149,13 +149,15 @@ function enter(withSound) {
   gateSwarm?.materialize();
   setTimeout(() => document.body.classList.remove('pre-real'), 250);
   scrollTo(0, 0);
+  // design 2: she builds herself from specks of light first, and the words wait until she is nearly whole
+  if (HERO === 2) import('./heroform.js').then(m => m.formHer($('#sprite-hero'), $('#her-hero')), () => $('#her-hero').classList.add('is-real'));
   // the headline slides up line by line, then the rest of the hero follows (lobod's order)
   setTimeout(() => {
     $('.hero h1').classList.add('is-in');
     $$('.hero .reveal-fade').forEach((el, i) => { el.style.setProperty('--d', `${0.2 + i * 0.12}s`); el.classList.add('is-in'); });
     $('.chips').classList.add('is-in');
     $('#joinpill').classList.add('is-shown');
-  }, 250);
+  }, HERO === 2 ? 2700 : 250);
   heroHer.load('talk');   // her talking clip, fetched once she has been met
   if (!reduce) heroHer.load('gaze');   // and J's gaze clip, so she can look at you
   if (withSound) setTimeout(() => { if (!spoken.has('talk')) say('talk'); }, 1300);
@@ -535,6 +537,7 @@ const hero = $('.hero'), heroCopy = $('.hero-copy'), chips = $('.chips'), bar = 
 // Desktop only for now; phones keep the current hero.
 const HERO = narrow() ? 0 : +(new URLSearchParams(location.search).get('hero') || 0);
 if (HERO === 1) document.body.classList.add('hero-v1');
+if (HERO === 2) document.body.classList.add('hero-v2');   // design 2: she forms from her memories (heroform.js)
 const wordmark = $('#wordmark'), wmLetters = $$('#wordmark span');
 let heroP = 0, wmx = 0, wmy = 0;
 const mind = $('.mind'), vowLine = $('#vow-line'), mindHead = $('#mind-head'), cards = $$('.moment'), played = new Set();

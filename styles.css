@@ -187,6 +187,9 @@ body.pre-real .her { opacity: 0; filter: brightness(2.4) saturate(0) drop-shadow
 .hero-v1 .hero-copy h1 { font-size: clamp(1.7rem, 2.7vw, 2.7rem); }
 .hero-v1 .hero-copy .k { margin-bottom: 1em; }
 .hero-v1 .hero-copy .lede { font-size: .95rem; }
+/* ── hero design 2 (/?hero=2, heroform.js): she forms from specks of her own pixels, then the sprite fades in over them */
+.hero-v2 .her:not(.is-real) #sprite-hero { opacity: var(--real, 0); }
+.her-form { position: absolute; left: -90%; top: -12%; width: 280%; height: 112%; pointer-events: none; }
 /* ?3d: her sprite laid on a surface shaped like her (her3d.js). The canvas is a little bigger than her frame so a
    turn is never clipped; the flat sprite keeps drawing underneath, unseen, because it is what the surface shows */
 .her .her3d { position: absolute; left: -25%; top: -8%; width: 150%; height: 108%; pointer-events: none; }
