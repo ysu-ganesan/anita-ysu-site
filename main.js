@@ -591,8 +591,6 @@ function dayTick(dt, hp) {
   dayEl.time.style.opacity = dayEl.note.parentElement.style.opacity = (1 - out).toFixed(3);
 }   // design 2: she forms from her memories (heroform.js)
 const wordmark = $('#wordmark'), wmLetters = $$('#wordmark span');
-const brand = $('.nav .brand'), brandText = $('.nav .brand span');
-const brandSpacing = parseFloat(getComputedStyle(brandText).letterSpacing) || 0;   // each header letter carries its spacing after it
 let heroP = 0, wmx = 0, wmy = 0, centreK = 0, goneT = 0;   // centreK: design 1's glide from the entry screen's place to the middle
 const mind = $('.mind'), vowLine = $('#vow-line'), mindHead = $('#mind-head'), cards = $$('.moment'), played = new Set();
 const mindLede = $('#mind-head .lede'), taken = new Set();
@@ -644,34 +642,9 @@ function frame(now) {
     centreK += ((goneT > 0.55 ? 1 : 0) - centreK) * Math.min(1, dt * 2.4);
     const out = ss(0.03, 0.22, hp), move = ss(0.1, 0.3, hp), k = 1 - Math.exp(-dt * 4);
     wmx += (-mx * 26 - wmx) * k; wmy += (-my * 14 - wmy) * k;
-    if (narrow()) {
-      // phones: the header shows only the emblem, so the letters spread apart and fade as the call comes in
-      wordmark.style.translate = `${wmx.toFixed(1)}px ${(wmy - out * 60).toFixed(1)}px`;
-      wordmark.style.opacity = (1 - out).toFixed(3);
-      wmLetters.forEach((l, i) => { l.style.translate = `${((i - 2) * out * 7).toFixed(2)}vw 0`; });
-    } else {
-      // Her name becomes the header's. At the top the header shows no logo (the big letters are her name); as you
-      // scroll, each big letter shrinks and flies to its own letter of the header's ANITA, turning from glass to
-      // solid on the way, and they hand over to the header's own text and emblem as they land. Scroll-driven.
-      const fly = ss(0.02, 0.2, hp), f = fly * fly * (3 - 2 * fly), drift = 1 - f;
-      wordmark.style.translate = `${(wmx * drift).toFixed(1)}px ${(wmy * drift).toFixed(1)}px`;
-      const sPx = parseFloat(getComputedStyle(brandText).fontSize) / parseFloat(getComputedStyle(wordmark).fontSize);
-      const node = brandText.firstChild, rg = document.createRange();
-      wmLetters.forEach((l, i) => {
-        rg.setStart(node, i); rg.setEnd(node, i + 1);
-        const c = rg.getBoundingClientRect(), r = l.getBoundingClientRect(), prev = l._fly || [0, 0];
-        const bx = r.left + r.width / 2 - prev[0], by = r.top + r.height / 2 - prev[1];   // where it stands without the flight
-        const cx = c.left + (c.width - brandSpacing) / 2, cy = c.top + c.height / 2;
-        const tx = (cx - bx) * f, ty = (cy - by) * f; l._fly = [tx, ty];
-        l.style.translate = `${tx.toFixed(1)}px ${ty.toFixed(1)}px`;
-        l.style.scale = lerp(1, sPx, f).toFixed(4);
-      });
-      wordmark.style.setProperty('--solid', ss(0.35, 0.8, f).toFixed(3));
-      const land = ss(0.9, 1, f);
-      wordmark.style.opacity = (1 - land).toFixed(3);
-      wordmark.style.visibility = land > 0.999 ? 'hidden' : '';
-      brand.style.setProperty('--show', land.toFixed(3));
-    }
+    wordmark.style.translate = `${wmx.toFixed(1)}px ${(wmy - out * 60).toFixed(1)}px`;
+    wordmark.style.opacity = (1 - out).toFixed(3);
+    wmLetters.forEach((l, i) => { l.style.translate = `${((i - 2) * out * 7).toFixed(2)}vw 0`; });
     const home = narrow() ? 50 : lerp(68, 50, centreK);
     $('#her-hero').style.setProperty('--herx', `${lerp(home, narrow() ? 50 : 68, move).toFixed(2)}vw`);   // on a phone she stays centred
   }
