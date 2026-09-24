@@ -507,7 +507,7 @@ const places = [
   ['.hero',    () => narrow() ? { x: 0.5, y: 0.66, r: 0.4, alpha: 0.85 }
                 : HERO === 5 ? pullBack()
                 : HERO === 6 ? { x: 0.28, y: 0.5, r: 0.3, alpha: 0 }   // design 6: her memory lives in the scene's core instead
-                : HERO === 1 ? { x: lerp(0.5, 0.68, ss(0.1, 0.3, heroP)), y: 0.45, r: 0.4, alpha: 1 }   // design 1: centred, behind the letters
+                : HERO === 1 ? { x: lerp(lerp(0.68, 0.5, centreK), 0.68, ss(0.1, 0.3, heroP)), y: 0.45, r: 0.4, alpha: 1 }   // design 1: centred, behind the letters
                 : { x: 0.68, y: 0.52, r: 0.38, alpha: 1 }],
   // the mind scene: behind the vow, then behind her memory's heading, filling in as the moments are kept
   ['.mind',    () => ({ x: 0.5, y: 0.5, r: mindP < 0.14 ? 0.46 : 0.4, alpha: mindP < 0.14 ? 0.3 : 0.5 })],
@@ -591,7 +591,7 @@ function dayTick(dt, hp) {
   dayEl.time.style.opacity = dayEl.note.parentElement.style.opacity = (1 - out).toFixed(3);
 }   // design 2: she forms from her memories (heroform.js)
 const wordmark = $('#wordmark'), wmLetters = $$('#wordmark span');
-let heroP = 0, wmx = 0, wmy = 0;
+let heroP = 0, wmx = 0, wmy = 0, centreK = 0, goneT = 0;   // centreK: design 1's glide from the entry screen's place to the middle
 const mind = $('.mind'), vowLine = $('#vow-line'), mindHead = $('#mind-head'), cards = $$('.moment'), played = new Set();
 const mindLede = $('#mind-head .lede'), taken = new Set();
 // one glowing node per moment: what the card becomes as it is taken into her memory
@@ -637,12 +637,16 @@ function frame(now) {
     // design 1: the letters rise in after the gate, drift gently against the cursor (eased, so it floats), and as
     // the call comes in they spread apart and fade while she glides back to the right to make room for it
     if (gate.classList.contains('is-gone')) wordmark.classList.add('is-in');
+    // on the entry screen she stands on the right, balancing its words; once she is real she glides to the middle
+    if (gate.classList.contains('is-gone')) goneT += dt;
+    centreK += ((goneT > 0.55 ? 1 : 0) - centreK) * Math.min(1, dt * 2.4);
     const out = ss(0.03, 0.22, hp), move = ss(0.1, 0.3, hp), k = 1 - Math.exp(-dt * 4);
     wmx += (-mx * 26 - wmx) * k; wmy += (-my * 14 - wmy) * k;
     wordmark.style.translate = `${wmx.toFixed(1)}px ${(wmy - out * 60).toFixed(1)}px`;
     wordmark.style.opacity = (1 - out).toFixed(3);
     wmLetters.forEach((l, i) => { l.style.translate = `${((i - 2) * out * 7).toFixed(2)}vw 0`; });
-    $('#her-hero').style.setProperty('--herx', `${lerp(50, narrow() ? 50 : 68, move).toFixed(2)}vw`);   // on a phone she stays centred
+    const home = narrow() ? 50 : lerp(68, 50, centreK);
+    $('#her-hero').style.setProperty('--herx', `${lerp(home, narrow() ? 50 : 68, move).toFixed(2)}vw`);   // on a phone she stays centred
   }
   if (gate.classList.contains('is-gone')) {
     // beat one's words leave early; beat two (the call) comes in and holds to the end of the hero
