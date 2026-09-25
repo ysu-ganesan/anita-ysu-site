@@ -47,17 +47,22 @@ export class Anita {
 
   // The reel's method (a Framer cursor-tracking component scrubbing one Veo clip along an axis): the cursor's
   // left-right position scrubs straight through one continuous, blink-free take of her turning her head, frames
-  // `sweep` of J's gaze clip (67 → 112, looking left → right). Nothing jumps across the clip any more; she moves
+  // `sweep` of J's gaze clip (51 → 112, looking left → right). Nothing jumps across the clip any more; she moves
   // through neighbouring frames only. The target is fractional: where her measured direction crosses the cursor's.
+  // She blinks on the way back from her left (`blink`, 57–67): those frames are stepped over as one step,
+  // 56 → 68, so she can look fully left without blinking every time. draw() shows whichever side is nearer
+  // (holding a mix of the two would ghost her face) and blends only for the 0.1 s of the step itself.
   _gazeTarget(g, home) {
-    const m = g.meta, yaw = m.yaw, [a, b] = m.sweep || [0, m.frames - 1];
+    const m = g.meta, yaw = m.yaw, [a, b] = m.sweep || [0, m.frames - 1], [s0, s1] = m.blink || [0, -1];
     const L = yaw[a], R = yaw[b];                            // her furthest left and right in the take
     const ty = home ? 0 : (this.gx < 0 ? -this.gx * L : this.gx * R);
     if (ty <= L) return a;
     if (ty >= R) return b;
     for (let f = a; f < b; f++) {
-      const y0 = yaw[f], y1 = yaw[f + 1];
-      if ((ty - y0) * (ty - y1) <= 0) return f + (y1 === y0 ? 0 : (ty - y0) / (y1 - y0));
+      const n = f === s0 - 1 ? s1 + 1 : f + 1;
+      const y0 = yaw[f], y1 = yaw[n];
+      if ((ty - y0) * (ty - y1) <= 0) return f + (y1 === y0 ? 0 : (ty - y0) / (y1 - y0)) * (n - f);
+      f = n - 1;
     }
     return a;
   }
@@ -133,15 +138,28 @@ export class Anita {
     const W = Math.round(cv.clientWidth * dpr), H = Math.round(cv.clientHeight * dpr);
     if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
     g.clearRect(0, 0, W, H);
-    const n = Math.min(meta.frames - 1, Math.max(0, Math.round(this.t)));
-    const page = pages[Math.floor(n / meta.perPage)], k = n % meta.perPage;
-    const sx = (k % meta.cols) * meta.fw, sy = Math.floor(k / meta.cols) * meta.fh;
     // fit by height, feet on the bottom edge, centred
     const al = meta.align || { dx: 0, dy: 0, scale: 1 };
     const h = H * al.scale, w = h * meta.fw / meta.fh;
     const dx0 = (W - w) / 2 + al.dx / meta.fw * w, dy0 = H - h - al.dy / meta.fh * h;
-    g.drawImage(page, sx, sy, meta.fw, meta.fh, dx0, dy0, w, h);
-    if (c.name === 'gaze' && Math.abs(this.tiltNow || 0) > 0.15) this._tilt(page, sx, sy, dx0, dy0, w / meta.fw);
+    const one = (n, alpha) => {
+      const page = pages[Math.floor(n / meta.perPage)], k = n % meta.perPage;
+      const sx = (k % meta.cols) * meta.fw, sy = Math.floor(k / meta.cols) * meta.fh;
+      g.globalAlpha = alpha;
+      g.drawImage(page, sx, sy, meta.fw, meta.fh, dx0, dy0, w, h);
+      if (c.name === 'gaze' && Math.abs(this.tiltNow || 0) > 0.15) this._tilt(page, sx, sy, dx0, dy0, w / meta.fw, alpha === 1);
+      g.globalAlpha = 1;
+    };
+    let n = Math.min(meta.frames - 1, Math.max(0, Math.round(this.t)));
+    // inside the blink she steps over (gaze only): the open-eyed frame on the nearer side
+    const [s0, s1] = meta.blink || [0, -1];
+    if (c.name === 'gaze' && n >= s0 && n <= s1) n = this.t < (s0 + s1) / 2 ? s0 - 1 : s1 + 1;
+    // the step across it: a 0.1 s blend from where she was, so it reads as a quick turn, not a cut
+    const now = performance.now();
+    if (c.name === 'gaze' && this._shown != null && this._shownClip === c && Math.abs(n - this._shown) > 4) this._step = { from: this._shown, at: now };
+    this._shown = n; this._shownClip = c;
+    const step = this._step && this._shownClip === c ? (now - this._step.at) / 100 : 1;
+    if (step < 1) { one(this._step.from, 1); one(n, step); } else { this._step = null; one(n, 1); }
     this.ready = true;
   }
 
@@ -149,10 +167,10 @@ export class Anita {
   // vertical is added here: her face is moved down (or up) inside her head, most at eye level and not at
   // all at the crown or the chin, like a small nod. Drawn in thin strips from the frame itself; nothing is
   // painted on. Band measured on the 450×800 gaze frames: crown ≈ 50, eyes ≈ 120, chin ≈ 168, x 150–305.
-  _tilt(page, sx, sy, dx0, dy0, k) {
+  _tilt(page, sx, sy, dx0, dy0, k, clear = true) {
     const g = this.ctx, A = this.tiltNow, X0 = 150, X1 = 305, Y0 = 48, EYE = 120, Y1 = 172;
     const bump = y => Math.sin(Math.PI * (y < EYE ? 0.5 * (y - Y0) / (EYE - Y0) : 0.5 + 0.5 * (y - EYE) / (Y1 - EYE)));
-    g.clearRect(dx0 + X0 * k, dy0 + Y0 * k, (X1 - X0) * k, (Y1 - Y0) * k);
+    if (clear) g.clearRect(dx0 + X0 * k, dy0 + Y0 * k, (X1 - X0) * k, (Y1 - Y0) * k);
     for (let y = Y0; y < Y1; y += 2) {
       // each destination row takes the source row that the nod moves into it
       const off = A * bump(y);
