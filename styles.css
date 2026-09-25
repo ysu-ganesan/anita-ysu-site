@@ -382,8 +382,8 @@ body.pre-real .her { opacity: 0; filter: brightness(2.4) saturate(0) drop-shadow
 .versus span { color: var(--dim); font-size: clamp(1rem, 1.6vw, 1.35rem); }
 .versus b { font-weight: 600; font-size: clamp(1.1rem, 2vw, 1.7rem); letter-spacing: -.01em; }
 
-/* ───────────── what we build (25 Sep): the vision board's ANITA Industrial door as glass cards, then the road it is on */
-.work { position: relative; padding: 16vh var(--pad) 14vh; }
+/* ───────────── ANITA at work (25 Sep): every kind of ANITA as a glass card (the vision board's ANITA Industrial door) */
+.work { position: relative; padding: 16vh var(--pad) 10vh; }
 .work-head { max-width: 780px; }
 .work-head h2 { margin-top: .5em; }
 .work-grid { list-style: none; margin: 9vh 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
@@ -403,8 +403,7 @@ body.pre-real .her { opacity: 0; filter: brightness(2.4) saturate(0) drop-shadow
 .wc-icon img { width: 26px; height: 26px; filter: drop-shadow(0 0 8px rgba(88,230,255,.4)); }
 .wc-n { font-family: var(--font-display); font-weight: 500; font-size: .6rem; letter-spacing: .24em; color: var(--dim); }
 .wc-tag { font-family: var(--font-display); font-weight: 500; font-size: .56rem; letter-spacing: .22em; text-transform: uppercase; color: var(--cyan); }
-.wc h3 { margin: .7em 0 0; font-size: clamp(1.3rem, 1.8vw, 1.6rem); font-weight: 600; letter-spacing: -.015em; line-height: 1.15; }
-.wc h3 span { display: block; margin-top: .45em; font-family: var(--font-mono); font-weight: 400; font-size: .72rem; letter-spacing: .04em; color: var(--dim); }
+.wc h3 { margin: .6em 0 0; font-size: clamp(1.3rem, 1.8vw, 1.6rem); font-weight: 600; letter-spacing: -.015em; line-height: 1.15; }
 .wc p { margin: 1em 0 0; color: var(--dim); font-size: .9rem; line-height: 1.6; }
 .wc p.wc-ai { padding-top: 1em; border-top: 1px solid var(--hair); color: var(--ink); }
 .wc-ai b { display: block; margin-bottom: .5em; font-family: var(--font-display); font-weight: 500; font-size: .54rem; letter-spacing: .24em; text-transform: uppercase; color: var(--cyan); }
@@ -415,13 +414,21 @@ body.pre-real .her { opacity: 0; filter: brightness(2.4) saturate(0) drop-shadow
 .wc-stack li { padding: 4px 9px; border-radius: 999px; border: 1px solid var(--hair); font-family: var(--font-mono); font-size: .66rem; color: #b9c6ca; }
 /* the last card is an invitation, not a product */
 .wc-you { background: rgba(88,230,255,.05); border-style: dashed; border-color: rgba(88,230,255,.35); }
-.wc-you h3 { font-size: clamp(1.6rem, 2.4vw, 2.1rem); }
 .wc-you p { margin-bottom: 1.6em; }
 .wc-you .btn.small { margin-top: auto; align-self: flex-start; }
+
+/* ───────────── ANITA Industrial: how she comes to work, four ways, then the road it is on */
+.industrial { position: relative; padding: 10vh var(--pad) 14vh; }
+.ways { list-style: none; margin: 8vh 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--line); counter-reset: way; }
+.ways li { padding: 26px 22px 26px 0; counter-increment: way; }
+.ways li + li { padding-left: 22px; border-left: 1px solid var(--line); }
+.ways b { display: block; font-weight: 600; font-size: clamp(1.05rem, 1.5vw, 1.3rem); letter-spacing: -.01em; line-height: 1.25; }
+.ways b::before { content: counter(way, decimal-leading-zero); display: block; margin-bottom: 14px; font-family: var(--font-display); font-weight: 500; font-size: .6rem; letter-spacing: .24em; color: var(--cyan); }
+.ways span { display: block; margin-top: .7em; color: var(--dim); font-size: .9rem; line-height: 1.6; }
 /* the road: four stages on one line, lit where work is under way */
 .road { margin-top: 12vh; }
 .road-steps { list-style: none; margin: 1.6em 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0 24px; counter-reset: step; }
-.road-steps li { position: relative; padding-top: 30px; counter-increment: step; text-shadow: 0 0 12px #000, 0 0 4px #000; }   /* the door's big graph rises behind it */
+.road-steps li { position: relative; padding-top: 30px; counter-increment: step; text-shadow: 0 0 12px #000, 0 0 4px #000; }   /* her memory grows behind it as the next chapter comes in */
 .road-steps li::before { content: ''; position: absolute; left: 0; right: -24px; top: 5px; height: 1px; background: var(--line); }
 .road-steps li:last-child::before { right: 0; background: linear-gradient(90deg, var(--line), transparent); }
 .road-steps i { position: absolute; left: 0; top: 0; width: 11px; height: 11px; border-radius: 50%; border: 1px solid rgba(88,230,255,.5); background: var(--bg); }
@@ -431,11 +438,24 @@ body.pre-real .her { opacity: 0; filter: brightness(2.4) saturate(0) drop-shadow
 .road-steps span { display: block; margin-top: .7em; color: var(--dim); font-size: .88rem; line-height: 1.55; }
 .road-steps em { display: block; margin-top: .8em; font-style: normal; font-family: var(--font-mono); font-size: .68rem; color: var(--cyan); }
 .road-steps li:not(.on) em { color: var(--dim); }
-@media (max-width: 1100px) { .work-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 1100px) {
+  .work-grid { grid-template-columns: 1fr 1fr; }
+  .ways { grid-template-columns: 1fr 1fr; }
+  .ways li:nth-child(odd) { padding-left: 0; border-left: 0; }
+  .ways li:nth-child(n+3) { border-top: 1px solid var(--line); }
+}
 
-/* ───────────── the door */
+/* ───────────── ANITA for you: the personal chapter opens with the page's first hero words */
+.chapter { min-height: 86vh; display: grid; place-content: center; justify-items: center; text-align: center; padding: 16vh var(--pad); }
+.chapter h2 { margin-top: .5em; font-size: clamp(2.2rem, 5.2vw, 4.6rem); max-width: 15ch; }
+.chapter .lede { margin-left: auto; margin-right: auto; }
+
+/* ───────────── the two doors: for you, and for your plant */
 .door { min-height: 90vh; display: grid; place-content: center; justify-items: center; text-align: center; padding: 16vh var(--pad); }
-.door h2 { font-size: clamp(2.2rem, 5.6vw, 5rem); max-width: 16ch; }
+.door h2 { margin-top: .5em; font-size: clamp(2rem, 3.8vw, 3.6rem); max-width: 14ch; }
+.doors { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: min(1200px, calc(100vw - 2 * var(--pad))); }
+.door-one { display: grid; justify-items: center; align-content: start; padding: 2vh 4vw; }
+.door-one + .door-one { border-left: 1px solid var(--line); }
 .door .lede { margin-left: auto; margin-right: auto; }
 
 /* ───────────── footer (spur) */
@@ -592,6 +612,12 @@ body.no-js-gate .gate { display: none; }
   .fact-grid li { border-right: 0; border-bottom: 1px solid var(--line); padding-left: 0 !important; }
   .versus li { grid-template-columns: 1fr; gap: 6px; }
   .work-grid { grid-template-columns: 1fr; }
+  .ways { grid-template-columns: 1fr; }
+  .ways li, .ways li + li { padding: 22px 0; border-left: 0; }
+  .ways li + li { border-top: 1px solid var(--line); }
+  .doors { grid-template-columns: 1fr; }
+  .door-one { padding: 0; }
+  .door-one + .door-one { border-left: 0; border-top: 1px solid var(--line); margin-top: 8vh; padding-top: 8vh; }
   .road-steps { grid-template-columns: 1fr; gap: 26px; }
   .road-steps li { padding: 0 0 0 28px; }
   .road-steps li::before { left: 5px; right: auto; top: 16px; bottom: -26px; width: 1px; height: auto; }
@@ -605,9 +631,9 @@ body.no-js-gate .gate { display: none; }
   .speaking { top: auto; bottom: 84px; }
 }
 
-/* small phones: five links do not fit beside her emblem; Work steps out of the pill (the footer still has it) */
+/* small phones: five links do not fit beside her emblem; Robots steps out of the pill (the footer still has it) */
 @media (max-width: 374px) {
-  .pill a[href="#work"] { display: none; }
+  .pill a[href="#walk"] { display: none; }
 }
 @media (max-width: 340px) {
   .pill a, .pill button { padding: 8px 4px; letter-spacing: 0; }

@@ -45,13 +45,14 @@ function splitLines(el) {
           for (let i = wraps.length - 1; i >= 0; i--) { const c = wraps[i].cloneNode(false); c.appendChild(inner); inner = c; }
           const s = document.createElement('span'); s.className = 'w'; s.appendChild(inner); words.push(s);
         }
-      } else if (ch.nodeType === 1) collect(ch, [...wraps, ch]);
+      } else if (ch.nodeName === 'BR') words.push(document.createElement('br'));   // a forced break: kept while measuring
+      else if (ch.nodeType === 1) collect(ch, [...wraps, ch]);
     }
   })(el, []);
   el.textContent = '';
   words.forEach((w, i) => { if (i) el.append(' '); el.append(w); });
   const lines = []; let top = null;
-  for (const w of words) { const t = w.offsetTop; if (top === null || Math.abs(t - top) > 4) { lines.push([]); top = t; } lines[lines.length - 1].push(w); }
+  for (const w of words) { if (w.nodeName === 'BR') continue; const t = w.offsetTop; if (top === null || Math.abs(t - top) > 4) { lines.push([]); top = t; } lines[lines.length - 1].push(w); }
   el.textContent = '';
   lines.forEach((ws, i) => {
     const line = document.createElement('span'), inn = document.createElement('span');
@@ -515,14 +516,17 @@ const places = [
                 : HERO === 6 ? { x: 0.28, y: 0.5, r: 0.3, alpha: 0 }   // design 6: her memory lives in the scene's core instead
                 : HERO === 1 ? { x: lerp(lerp(0.68, 0.5, centreK), 0.68, ss(0.1, 0.3, heroP)), y: 0.45, r: 0.4, alpha: 1 }   // design 1: centred, behind the letters
                 : { x: 0.68, y: 0.52, r: 0.38, alpha: 1 }],
+  // ANITA at work and ANITA Industrial: small and faint, up in the corner, so the cards stay easy to read
+  ['.work',       () => narrow() ? { x: 0.5, y: 0.14, r: 0.2, alpha: 0.12 } : { x: 0.88, y: 0.2, r: 0.22, alpha: 0.2 }],
+  ['.industrial', () => narrow() ? { x: 0.5, y: 0.14, r: 0.2, alpha: 0.12 } : { x: 0.86, y: 0.26, r: 0.24, alpha: 0.22 }],
+  // ANITA for you: her memory comes back to the middle, where the vow picks it up
+  ['.chapter',    () => ({ x: 0.5, y: 0.5, r: narrow() ? 0.4 : 0.46, alpha: 0.3 })],
   // the mind scene: behind the vow, then behind her memory's heading, filling in as the moments are kept
   ['.mind',    () => ({ x: 0.5, y: 0.5, r: mindP < 0.14 ? 0.46 : 0.4, alpha: mindP < 0.14 ? 0.3 : 0.5 })],
   ['.yours',   inYours],
   // in the demo's city: into HQ's brain core (above). On the drawn road (no 3D) the sphere is home on the horizon
   ['.walk',    () => city ? (cityCore && graph.on ? intoCore() : { x: 0.5, y: 0.3, r: 0.1, alpha: 0 }) : { x: 0.5, y: 0.42 - 0.07 - walkP * 0.05, r: 0.05 + walkP * 0.1, alpha: 0.95 }],
   ['.facts',   () => ({ x: 0.85, y: 0.3, r: 0.3, alpha: 0.3 })],
-  // what we build: small and faint, up in the corner, so the cards stay easy to read
-  ['.work',    () => narrow() ? { x: 0.5, y: 0.14, r: 0.2, alpha: 0.12 } : { x: 0.88, y: 0.2, r: 0.22, alpha: 0.2 }],
   ['.door',    () => ({ x: 0.5, y: 0.5, r: 0.46, alpha: 0.55 })],
   ['.foot',    () => ({ x: 0.5, y: 0.9, r: 0.5, alpha: 0.22 })],
 ].map(([s, f]) => [$(s), f]);

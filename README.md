@@ -1,6 +1,6 @@
 # YSU site
 
-A third ANITA page that combines the other two in `anita-site`:
+A third ANITA page. Since 25 Sep it presents ANITA the company (one brain, at work everywhere) with the companion as one chapter; see "ANITA at work" below. It combines the other two pages in `anita-site`:
 
 - **ANITA site** (the folder root) gave the story and copy: the claim, then the proof moments (Maya, Mondays, Mum's pottery class, dubbed not subtitles), the "tap to forget" node, the robot line and the early-access door.
 - **Sprite demo** (`sprite-kit/`, J's kit) gave her: the 2D sprite sheets (idle, talk, walk), her voice lines, and the colour palette (black, `#eaf6f8` ink, `#58e6ff` cyan, Orbitron + Sora).
@@ -43,17 +43,35 @@ Her name, huge, behind her: glass ANITA letters (thin cyan edges, see-through, s
 
 The other designs tried that day are kept to compare: `/?hero=0` the hero before, `2` she forms from specks of her own pixels (`heroform.js`), `4` a day with her, `5` inside her memory then the pull-back, `6` her in a scene (a framed window onto ANITA HQ). Desktop only.
 
-## What we build (added 25 Sep)
+## ANITA at work: the whole page (25 Sep)
 
-`#work`, between "What runs today" and the early-access door (nav: Work). It holds six glass cards: NEO ERP (BGR NEO), the ACC Sizing Suite (ENEXIO), BGRNEO WELD, robotic sugar de-bagging, ANITA herself, and a "Yours, next" card that opens an email to hello@aneeta.ai. Under the cards, the vision board's road: the office → the floor → the machines → humanoids, lit where work is under way. A soft light follows the cursor inside each card.
+Chosen 25 Sep: the page is no longer only the personal companion. It presents ANITA the company, one brain at work everywhere, with the companion as one chapter. The page runs in this order:
+
+1. **Hero:** "One brain. At work everywhere." The chips around her are one memory from home, one from the office and one from a plant. The buttons are See the work and Hear her.
+2. **ANITA at work** (`#work`): six glass cards, each a kind of ANITA.
+   - ANITA for manufacturing (NEO ERP, BGR NEO)
+   - ANITA for power plants (ACC Sizing Suite, ENEXIO)
+   - ANITA for welding (BGRNEO WELD)
+   - ANITA in robots (sugar de-bagging)
+   - ANITA for you (the app)
+   - ANITA for your plant (an email to hello@aneeta.ai)
+
+   A soft light follows the cursor inside each card.
+3. **ANITA Industrial** (`#industrial`): "An AI department inside your building". It gives four ways ANITA comes to work, then the road: the office → the floor → the machines → humanoids, lit where work is under way.
+4. **ANITA for you** (`#personal`): the page's first hero words, "She remembers what every AI forgets." After them come the memory scene, "You choose what she forgets" and the walk, all as before.
+5. **What runs today:** as before.
+6. **Two doors** (`#door`): "For you" is early access, which opens the panel. "For your plant" is an email to the team.
+
+The nav is Work · Industrial · Personal · Robots · Contact. On phones narrower than 375px, Robots drops out of the nav; the footer still has it. Split headings keep a `<br>` as a forced line break (`splitLines` in `main.js`), so the hero always breaks after "One brain."
 
 The shape comes from the vision board's ANITA Industrial page (`Dee-Nith/aneeta-vision`, `industrial.html`). The facts come from the project folders on the Desktop (`neo-erp`, `Enexio_ACC_Software`, `welding-software`). The copy only claims what those sources say:
 
 - The welding card says **AI next**, not AI inside. Its seam finding is geometric, and camera inspection is a plan.
 - The sugar de-bagging card says no more than the vision board does, since there is no repo or document for it.
+- "The role remembers" is written as a design aim ("Designed to…"), because the vision board marks it as by design, not built.
 - No client data, pricing or project names are used.
 
-Code: `.work` in `index.html` and `styles.css`, `.work` in `places` (`main.js`, where the memory graph sits: small and faint in the corner). On phones narrower than 375px, the nav drops its Work link; the footer still has one.
+Where the memory graph sits (`places` in `main.js`): it steps aside, small and faint in the corner, for the two work sections. It comes back to the middle for "ANITA for you", where the vow picks it up.
 
 ## ANITA in 3D (try it: http://127.0.0.1:8791/?3d)
 

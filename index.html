@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>YSU · ANITA — she remembers what every AI forgets</title>
-<meta name="description" content="ANITA is a personal AI with a private memory of you. On your phone now. In a robot in your home later.">
+<title>YSU · ANITA — one brain, at work everywhere</title>
+<meta name="description" content="ANITA builds AI for home and industry: a personal AI with a private memory of you, and software with AI inside for factories, power plants and robots.">
 <meta name="theme-color" content="#000000">
 <link rel="icon" href="assets/emblem-64.png" sizes="64x64">
 <link rel="icon" href="assets/emblem-192.png" sizes="192x192">
@@ -26,6 +26,7 @@
      page. References, section by section:
        cursor + sphere ........ ausdata.ai
        hero ................... lobod.rocks (Akshata's pick)
+       at work + industrial ... the vision board's ANITA Industrial door (Dee-Nith/aneeta-vision)
        headline reveals ....... techredux.co (masked line slide-up, released by the gate)
        the walk ............... unitedcarriers.com (scroll-scrubbed journey, live speed)
        early access ........... why.zero.university (pill that opens into a panel)
@@ -65,11 +66,11 @@
 <header class="nav">
   <a class="brand" href="#top" data-cursor="top"><img src="assets/emblem-64.png" alt="" width="28" height="28"><span>ANITA</span></a>
   <nav class="pill" aria-label="Sections">
-    <a href="#remember">Memory</a>
-    <a href="#yours">Privacy</a>
-    <a href="#walk">Robots</a>
     <a href="#work">Work</a>
-    <a href="#door" class="cta">Early access</a>
+    <a href="#industrial">Industrial</a>
+    <a href="#personal">Personal</a>
+    <a href="#walk">Robots</a>
+    <a href="#door" class="cta">Contact</a>
   </nav>
 </header>
 
@@ -104,14 +105,14 @@
          (videotrack.js). Used as soon as assets/anita-look.mp4 exists; until then the sprite version stands in. -->
     <video class="hero-video" id="hero-video" muted playsinline preload="auto" aria-hidden="true" hidden></video>
     <div class="hero-copy">
-      <div class="k reveal-fade">ANITA · personal AI</div>
-      <h1 class="split" data-gate>She remembers what every AI <em>forgets.</em></h1>
-      <p class="lede reveal-fade">An assistant for the rest of your life. On your phone now. In a robot in your home later.</p>
+      <div class="k reveal-fade">ANITA · AI for home and industry</div>
+      <h1 class="split" data-gate>One brain.<br>At work <em>everywhere.</em></h1>
+      <p class="lede reveal-fade">At home, she remembers your life. At work, she drafts the paperwork, sizes power-plant cooling and programs welding robots.</p>
       <div class="row reveal-fade">
-        <button type="button" class="btn" data-join>Get early access</button>
+        <a class="btn" href="#work" data-cursor="see the work">See the work</a>
         <button type="button" class="btn ghost" id="hear" data-cursor="listen">▶ Hear her</button>
       </div>
-      <p class="note reveal-fade">She will remember you pressed that.</p>
+      <p class="proof reveal-fade">At&nbsp;home&nbsp;· In&nbsp;the&nbsp;office&nbsp;· On&nbsp;the&nbsp;floor&nbsp;· In&nbsp;machines</p>
     </div>
 
     <!-- beat two (the Sprite demo's "Talk to her"): the opening words leave and a live call plays out
@@ -139,14 +140,138 @@
       <div class="drag" id="drag" data-cursor="drag her memory" aria-hidden="true"></div>
     </div>
 
-    <!-- memories floating around her, like lobod's glass chips -->
+    <!-- memories floating around her, like lobod's glass chips: one from home, one from the office, one from a plant -->
     <div class="chips" aria-hidden="true">
-      <div class="chip" style="--x:78vw;--y:14vh;--d:7s"><b>Fri</b>Mum's birthday is the 15th. No gift yet.</div>
-      <div class="chip" style="--x:80vw;--y:40vh;--d:8.5s"><b>Mon</b>You are busier on Mondays.</div>
-      <div class="chip" style="--x:77vw;--y:66vh;--d:9s"><b>Tue</b>Subtitles annoy you. Dubbed it is.</div>
+      <div class="chip" style="--x:78vw;--y:14vh;--d:7s"><b>Home · Fri</b>Mum's birthday is the 15th. No gift yet.</div>
+      <div class="chip" style="--x:80vw;--y:40vh;--d:8.5s"><b>Office · RFQ</b>Customer drawing read. Intake drafted for the HOD.</div>
+      <div class="chip" style="--x:77vw;--y:66vh;--d:9s"><b>Plant · 800 MW</b>Condenser sized in 1.6 s. Every limit checked.</div>
     </div>
     <div class="cue" aria-hidden="true">scroll</div>
   </div>
+</section>
+
+<!-- ═════════════════ ANITA at work (25 Sep): every kind of ANITA, first thing after the hero. The team's work,
+     from the vision board's ANITA Industrial door (Dee-Nith/aneeta-vision, industrial.html) and the project
+     folders. Claims stay inside what those say -->
+<section class="work" id="work">
+  <div class="work-head">
+    <div class="k">ANITA at work</div>
+    <h2 class="split">Where ANITA works&nbsp;today.</h2>
+    <p class="lede reveal-fade">Each one is ANITA, shaped for a different job: agents inside a manufacturer's ERP, a design engine for power plants, programs for welding robots, eyes for a robot cell, and a companion <b>who remembers you</b>.</p>
+  </div>
+
+  <ul class="work-grid">
+    <li class="reveal-fade">
+      <article class="wc">
+        <div class="wc-top">
+          <span class="wc-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="2.5" y="3" width="7" height="5.5" rx="1.2"/><rect x="14.5" y="3" width="7" height="5.5" rx="1.2"/><rect x="8.5" y="15.5" width="7" height="5.5" rx="1.2"/><path d="M9.5 5.75h5M6 8.5V12h12V8.5M12 12v3.5"/></svg></span>
+          <span class="wc-n">01</span>
+        </div>
+        <div class="wc-tag">NEO ERP · for BGR NEO</div>
+        <h3>ANITA for manufacturing</h3>
+        <p>BGR NEO builds automation machines to order. We are rebuilding their ERP one module at a time: every step of their process becomes a screen, every document a record, every approval a gate.</p>
+        <p class="wc-ai"><b>AI inside</b>Eleven agents that remember, draft, check and chase. They find and grade sales leads, read customers' RFQs, and match each enquiry to the closest machine built before. AI never signs: all 32 signatures stay with people.</p>
+        <ul class="wc-stack"><li>React</li><li>TypeScript</li><li>FastAPI</li><li>Spring Boot</li><li>LLM agents</li><li>OCR</li></ul>
+      </article>
+    </li>
+    <li class="reveal-fade" style="--d:.1s">
+      <article class="wc">
+        <div class="wc-top">
+          <span class="wc-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><circle cx="12" cy="12" r="1.6"/><path d="M12 10.4c-.6-2.6.2-5 2.4-5.4 1.9-.3 2.6 1.9 1 3.4-1 .9-2.2 1.5-3.4 2M13.6 12c2.6-.6 5 .2 5.4 2.4.3 1.9-1.9 2.6-3.4 1-.9-1-1.5-2.2-2-3.4M12 13.6c.6 2.6-.2 5-2.4 5.4-1.9.3-2.6-1.9-1-3.4 1-.9 2.2-1.5 3.4-2M10.4 12c-2.6.6-5-.2-5.4-2.4-.3-1.9 1.9-2.6 3.4-1 .9 1 1.5 2.2 2 3.4"/></svg></span>
+          <span class="wc-n">02</span>
+        </div>
+        <div class="wc-tag">ACC Sizing Suite · for ENEXIO</div>
+        <h3>ANITA for power plants</h3>
+        <p>Air-cooled condensers let a power plant cool its steam with air instead of water. Our suite replaces a decades-old design program: from a customer's brief it sizes the condenser for an 800&nbsp;MW-class plant in 1.6&nbsp;seconds, checked against the old program on hundreds of past projects.</p>
+        <p class="wc-ai"><b>AI inside</b>A machine-learning twin, trained only on the engine's own results, screens design options in moments. The full physics engine then re-checks every design it shortlists.</p>
+        <ul class="wc-stack"><li>Python</li><li>SciPy</li><li>CoolProp</li><li>FastAPI</li><li>Next.js</li><li>three.js</li></ul>
+      </article>
+    </li>
+    <li class="reveal-fade" style="--d:.2s">
+      <article class="wc">
+        <div class="wc-top">
+          <span class="wc-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 21h8M5 21v-2.5h4V21M7 18.5 9.5 11l6-3M16.6 9 19 13.5"/><circle cx="9.5" cy="11" r="1.4"/><circle cx="15.5" cy="8" r="1.4"/><path d="M20.5 16.2l.9 1.1M18.6 16.8l-.3 1.4M21.3 14.4l1.3-.2"/></svg></span>
+          <span class="wc-n">03</span>
+        </div>
+        <div class="wc-tag">BGRNEO WELD · with BGR NEO</div>
+        <h3>ANITA for welding</h3>
+        <p>Give it the 3D model of a fabricated part. It finds the weld seams and ranks them, an operator confirms and orders them, and it plans the torch paths and writes the program for ABB and Yaskawa robots.</p>
+        <p class="wc-ai next"><b>AI next</b>Cameras that inspect every finished weld. Today a digital twin of the cell already checks every move for reach and collisions before a robot runs it.</p>
+        <ul class="wc-stack"><li>Python</li><li>OpenCASCADE</li><li>PyQt6</li><li>RoboDK</li><li>ABB RAPID</li><li>Yaskawa INFORM</li></ul>
+      </article>
+    </li>
+    <li class="reveal-fade">
+      <article class="wc">
+        <div class="wc-top">
+          <span class="wc-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 7V3.5h3.5M17.5 3.5H21V7M21 17v3.5h-3.5M6.5 20.5H3V17"/><path d="M9.5 7h5l-.8 1.6c1.9 1.2 2.8 3.2 2.8 5.2 0 2.2-1.4 3.7-3.5 3.7h-2c-2.1 0-3.5-1.5-3.5-3.7 0-2 .9-4 2.8-5.2z"/></svg></span>
+          <span class="wc-n">04</span>
+        </div>
+        <div class="wc-tag">Sugar de-bagging · physical AI</div>
+        <h3>ANITA in robots</h3>
+        <p>Emptying sacks of sugar by hand is heavy, dusty and endlessly repetitive. Our first physical-AI project is a robot cell that takes the job over.</p>
+        <p class="wc-ai"><b>AI inside</b>Perception-driven robotics: the robot works from what it sees, not from a fixed script. It is where our software agents become machines that move.</p>
+        <ul class="wc-stack"><li>Computer vision</li><li>Robotics</li></ul>
+      </article>
+    </li>
+    <li class="reveal-fade" style="--d:.1s">
+      <article class="wc">
+        <div class="wc-top">
+          <span class="wc-icon" aria-hidden="true"><img src="assets/emblem-64.png" alt="" width="26" height="26"></span>
+          <span class="wc-n">05</span>
+        </div>
+        <div class="wc-tag">The companion app · iPhone first</div>
+        <h3>ANITA for you</h3>
+        <p>A personal AI with a private memory of your life. Her engine runs today. The iPhone app is in development.</p>
+        <p class="wc-ai"><b>AI inside</b>Five layers of memory, three thinking modes and full-duplex voice. Her memory lives with you, and one day it walks into a robot body.</p>
+        <ul class="wc-stack"><li>iOS</li><li>Local models</li><li>Voice</li><li>Memory</li></ul>
+      </article>
+    </li>
+    <li class="reveal-fade" style="--d:.2s">
+      <article class="wc wc-you">
+        <div class="wc-top">
+          <span class="wc-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          <span class="wc-n">06</span>
+        </div>
+        <div class="wc-tag">Your workflow · next</div>
+        <h3>ANITA for your plant</h3>
+        <p>If someone in your plant reads and re-types all day, that work is a candidate: quotes, shift reports, maintenance logs, tenders. We map one workflow with you and tell you honestly if ANITA fits.</p>
+        <a class="btn small" href="mailto:hello@aneeta.ai?subject=Bring%20ANITA%20to%20work" data-cursor="hello@aneeta.ai">Write to us</a>
+      </article>
+    </li>
+  </ul>
+</section>
+
+<!-- ═════════════════ ANITA Industrial: how she comes to work (the vision board's industrial door), and the road it is on -->
+<section class="industrial" id="industrial">
+  <div class="work-head">
+    <div class="k">ANITA Industrial</div>
+    <h2 class="split">An AI department inside your&nbsp;building.</h2>
+    <p class="lede reveal-fade">Factories, plants and engineering teams run on repetitive knowledge work, and their data <b>can't go to the cloud</b>. So ANITA comes to them: a team of agents built around how the company already works.</p>
+  </div>
+  <ol class="ways">
+    <li class="reveal-fade"><b>On your premises</b><span>Built to run on your own machines, so drawings, prices and people's names stay in the building.</span></li>
+    <li class="reveal-fade" style="--d:.1s"><b>Agents draft, people sign</b><span>Every quote, report and approval is drafted by an agent and signed by a person. AI never signs, and every step is logged.</span></li>
+    <li class="reveal-fade" style="--d:.2s"><b>One workflow first</b><span>We agree the success numbers on day one and measure them on day 30. If it doesn't clear the bar, you keep the report.</span></li>
+    <li class="reveal-fade" style="--d:.3s"><b>The role remembers</b><span>Designed to learn the job beside your people, so when someone moves on, their know-how stays.</span></li>
+  </ol>
+
+  <!-- the road it is on (the vision board's four stages); lit where work is under way -->
+  <div class="road">
+    <div class="k reveal-fade">Where it goes</div>
+    <ol class="road-steps">
+      <li class="reveal-fade on"><i aria-hidden="true"></i><b>The office</b><span>Agents draft, check and chase. People approve.</span><em>NEO ERP · ACC Sizing Suite</em></li>
+      <li class="reveal-fade" style="--d:.1s"><i aria-hidden="true"></i><b>The floor</b><span>Cameras on the line: inspection, defects, maintenance.</span><em>Next</em></li>
+      <li class="reveal-fade on" style="--d:.2s"><i aria-hidden="true"></i><b>The machines</b><span>Perception meets robots.</span><em>BGRNEO WELD · Sugar de-bagging</em></li>
+      <li class="reveal-fade" style="--d:.3s"><i aria-hidden="true"></i><b>Humanoids</b><span>When robots are ready for factories, the brain is already installed.</span><em>Later</em></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ═════════════════ ANITA for you: the personal chapter opens with the page's first hero words -->
+<section class="chapter" id="personal">
+  <div class="k reveal-fade">ANITA for you · personal AI</div>
+  <h2 class="split">She remembers what every AI <em>forgets.</em></h2>
+  <p class="lede reveal-fade">An assistant for the rest of your life. On your phone now. In a robot in your home later.</p>
 </section>
 
 <!-- ═════════════════ the vow and her memory: one scene, pinned while you scroll.
@@ -271,112 +396,23 @@
   </ul>
 </section>
 
-<!-- ═════════════════ what we build (25 Sep): the team's industrial work, from the vision board's ANITA Industrial
-     door (Dee-Nith/aneeta-vision, industrial.html) and the project folders. Claims stay inside what those say -->
-<section class="work" id="work">
-  <div class="work-head">
-    <div class="k">What we build</div>
-    <h2 class="split">Industrial software, with AI&nbsp;inside.</h2>
-    <p class="lede reveal-fade">ANITA is one of the things we build. The rest runs in factories and power plants: an ERP whose agents <b>draft, check and chase</b>, a tool that sizes a power plant's cooling in seconds, welding robots programmed straight from CAD, and a robot for one of the dustiest jobs on the line.</p>
-  </div>
-
-  <ul class="work-grid">
-    <li class="reveal-fade">
-      <article class="wc">
-        <div class="wc-top">
-          <span class="wc-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="2.5" y="3" width="7" height="5.5" rx="1.2"/><rect x="14.5" y="3" width="7" height="5.5" rx="1.2"/><rect x="8.5" y="15.5" width="7" height="5.5" rx="1.2"/><path d="M9.5 5.75h5M6 8.5V12h12V8.5M12 12v3.5"/></svg></span>
-          <span class="wc-n">01</span>
-        </div>
-        <div class="wc-tag">Manufacturing · ERP &amp; MES</div>
-        <h3>NEO ERP<span>for BGR NEO</span></h3>
-        <p>BGR NEO builds automation machines to order. We are rebuilding their ERP one module at a time: every step of their process becomes a screen, every document a record, every approval a gate.</p>
-        <p class="wc-ai"><b>AI inside</b>Eleven agents that remember, draft, check and chase. They find and grade sales leads, read customers' RFQs, and match each enquiry to the closest machine built before. AI never signs: all 32 signatures stay with people.</p>
-        <ul class="wc-stack"><li>React</li><li>TypeScript</li><li>FastAPI</li><li>Spring Boot</li><li>LLM agents</li><li>OCR</li></ul>
-      </article>
-    </li>
-    <li class="reveal-fade" style="--d:.1s">
-      <article class="wc">
-        <div class="wc-top">
-          <span class="wc-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><circle cx="12" cy="12" r="1.6"/><path d="M12 10.4c-.6-2.6.2-5 2.4-5.4 1.9-.3 2.6 1.9 1 3.4-1 .9-2.2 1.5-3.4 2M13.6 12c2.6-.6 5 .2 5.4 2.4.3 1.9-1.9 2.6-3.4 1-.9-1-1.5-2.2-2-3.4M12 13.6c.6 2.6-.2 5-2.4 5.4-1.9.3-2.6-1.9-1-3.4 1-.9 2.2-1.5 3.4-2M10.4 12c-2.6.6-5-.2-5.4-2.4-.3-1.9 1.9-2.6 3.4-1 .9 1 1.5 2.2 2 3.4"/></svg></span>
-          <span class="wc-n">02</span>
-        </div>
-        <div class="wc-tag">Power plants · Engineering design</div>
-        <h3>ACC Sizing Suite<span>for ENEXIO</span></h3>
-        <p>Air-cooled condensers let a power plant cool its steam with air instead of water. Our suite replaces a decades-old design program: from a customer's brief it sizes the condenser for an 800&nbsp;MW-class plant in 1.6&nbsp;seconds, checked against the old program on hundreds of past projects.</p>
-        <p class="wc-ai"><b>AI inside</b>A machine-learning twin, trained only on the engine's own results, screens design options in moments. The full physics engine then re-checks every design it shortlists.</p>
-        <ul class="wc-stack"><li>Python</li><li>SciPy</li><li>CoolProp</li><li>FastAPI</li><li>Next.js</li><li>three.js</li></ul>
-      </article>
-    </li>
-    <li class="reveal-fade" style="--d:.2s">
-      <article class="wc">
-        <div class="wc-top">
-          <span class="wc-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 21h8M5 21v-2.5h4V21M7 18.5 9.5 11l6-3M16.6 9 19 13.5"/><circle cx="9.5" cy="11" r="1.4"/><circle cx="15.5" cy="8" r="1.4"/><path d="M20.5 16.2l.9 1.1M18.6 16.8l-.3 1.4M21.3 14.4l1.3-.2"/></svg></span>
-          <span class="wc-n">03</span>
-        </div>
-        <div class="wc-tag">Fabrication · Robotic welding</div>
-        <h3>BGRNEO WELD<span>with BGR NEO</span></h3>
-        <p>Give it the 3D model of a fabricated part. It finds the weld seams and ranks them, an operator confirms and orders them, and it plans the torch paths and writes the program for ABB and Yaskawa robots.</p>
-        <p class="wc-ai next"><b>AI next</b>Cameras that inspect every finished weld. Today a digital twin of the cell already checks every move for reach and collisions before a robot runs it.</p>
-        <ul class="wc-stack"><li>Python</li><li>OpenCASCADE</li><li>PyQt6</li><li>RoboDK</li><li>ABB RAPID</li><li>Yaskawa INFORM</li></ul>
-      </article>
-    </li>
-    <li class="reveal-fade">
-      <article class="wc">
-        <div class="wc-top">
-          <span class="wc-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 7V3.5h3.5M17.5 3.5H21V7M21 17v3.5h-3.5M6.5 20.5H3V17"/><path d="M9.5 7h5l-.8 1.6c1.9 1.2 2.8 3.2 2.8 5.2 0 2.2-1.4 3.7-3.5 3.7h-2c-2.1 0-3.5-1.5-3.5-3.7 0-2 .9-4 2.8-5.2z"/></svg></span>
-          <span class="wc-n">04</span>
-        </div>
-        <div class="wc-tag">Factory floor · Physical AI</div>
-        <h3>Robotic sugar de-bagging<span>our first physical AI</span></h3>
-        <p>Emptying sacks of sugar by hand is heavy, dusty and endlessly repetitive. This robot cell takes the job over.</p>
-        <p class="wc-ai"><b>AI inside</b>Perception-driven robotics: the robot works from what it sees, not from a fixed script. It is where our software agents become machines that move.</p>
-        <ul class="wc-stack"><li>Computer vision</li><li>Robotics</li></ul>
-      </article>
-    </li>
-    <li class="reveal-fade" style="--d:.1s">
-      <article class="wc">
-        <div class="wc-top">
-          <span class="wc-icon" aria-hidden="true"><img src="assets/emblem-64.png" alt="" width="26" height="26"></span>
-          <span class="wc-n">05</span>
-        </div>
-        <div class="wc-tag">Everyone · Personal AI</div>
-        <h3>ANITA<span>for you</span></h3>
-        <p>The one this page is about: a personal AI with a private memory of you. Her engine runs today. The iPhone app is in development.</p>
-        <p class="wc-ai"><b>AI inside</b>Five layers of memory, three thinking modes and full-duplex voice. Her memory lives with you, and one day it walks into a robot body.</p>
-        <ul class="wc-stack"><li>iOS</li><li>Local models</li><li>Voice</li><li>Memory</li></ul>
-      </article>
-    </li>
-    <li class="reveal-fade" style="--d:.2s">
-      <article class="wc wc-you">
-        <div class="wc-top">
-          <span class="wc-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-          <span class="wc-n">06</span>
-        </div>
-        <div class="wc-tag">Your plant</div>
-        <h3>Yours, next.</h3>
-        <p>If someone in your plant reads and re-types all day, that work is a candidate: quotes, shift reports, maintenance logs, tenders. We map one workflow with you, build it to run on your own machines, and tell you honestly if it isn't a fit.</p>
-        <a class="btn small" href="mailto:hello@aneeta.ai?subject=Industrial%20software" data-cursor="hello@aneeta.ai">Write to us</a>
-      </article>
-    </li>
-  </ul>
-
-  <!-- the road it is on (the vision board's four stages); lit where work is under way -->
-  <div class="road">
-    <div class="k reveal-fade">Where it goes</div>
-    <ol class="road-steps">
-      <li class="reveal-fade on"><i aria-hidden="true"></i><b>The office</b><span>Agents draft, check and chase. People approve.</span><em>NEO ERP · ACC Sizing Suite</em></li>
-      <li class="reveal-fade" style="--d:.1s"><i aria-hidden="true"></i><b>The floor</b><span>Cameras on the line: inspection, defects, maintenance.</span><em>Next</em></li>
-      <li class="reveal-fade on" style="--d:.2s"><i aria-hidden="true"></i><b>The machines</b><span>Perception meets robots.</span><em>BGRNEO WELD · Sugar de-bagging</em></li>
-      <li class="reveal-fade" style="--d:.3s"><i aria-hidden="true"></i><b>Humanoids</b><span>When robots are ready for factories, the brain is already installed.</span><em>Later</em></li>
-    </ol>
-  </div>
-</section>
-
-<!-- ═════════════════ early access: the invitation; the button opens why.zero.university's panel -->
+<!-- ═════════════════ the two doors: early access for you (its button opens why.zero.university's panel),
+     and ANITA for your plant (an email to the team) -->
 <section class="door" id="door">
-  <h2 class="split">Be one of the first people she&nbsp;remembers.</h2>
-  <p class="lede reveal-fade">Early access opens with the iOS app. You will hear from the founder directly, not from a marketing funnel.</p>
-  <button type="button" class="btn big reveal-fade" data-join>Get early access</button>
+  <div class="doors">
+    <div class="door-one">
+      <div class="k reveal-fade">For you</div>
+      <h2 class="split">Be one of the first people she&nbsp;remembers.</h2>
+      <p class="lede reveal-fade">Early access opens with the iOS app. You will hear from the founder directly, not from a marketing funnel.</p>
+      <button type="button" class="btn big reveal-fade" data-join>Get early access</button>
+    </div>
+    <div class="door-one">
+      <div class="k reveal-fade">For your plant</div>
+      <h2 class="split">Bring ANITA to&nbsp;work.</h2>
+      <p class="lede reveal-fade">Tell us the job someone re-types all day. We will map it with you, and tell you honestly if ANITA fits.</p>
+      <a class="btn big ghost reveal-fade" href="mailto:hello@aneeta.ai?subject=Bring%20ANITA%20to%20work" data-cursor="hello@aneeta.ai">Write to us</a>
+    </div>
+  </div>
 </section>
 </main>
 
@@ -384,12 +420,13 @@
 <footer class="foot">
   <div class="foot-grid">
     <div class="foot-col">
-      <h4>Her</h4>
+      <h4>ANITA</h4>
       <ul>
-        <li><a href="#remember">Memory</a></li>
+        <li><a href="#work">At work</a></li>
+        <li><a href="#industrial">Industrial</a></li>
+        <li><a href="#personal">Personal</a></li>
         <li><a href="#yours">Privacy</a></li>
         <li><a href="#walk">Robots</a></li>
-        <li><a href="#work">Work</a></li>
         <li><button type="button" data-join>Early access</button></li>
       </ul>
     </div>
