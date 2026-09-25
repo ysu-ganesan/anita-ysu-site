@@ -1,6 +1,6 @@
 # YSU site
 
-A third ANITA page. Since 25 Sep it presents ANITA the company (one brain, at work everywhere) with the companion as one chapter; see "ANITA at work" below. It combines the other two pages in `anita-site`:
+A third ANITA page. Since 25 Sep it presents ANITA the company (one brain, at work everywhere) with the companion as one part; see "The work" below. It combines the other two pages in `anita-site`:
 
 - **ANITA site** (the folder root) gave the story and copy: the claim, then the proof moments (Maya, Mondays, Mum's pottery class, dubbed not subtitles), the "tap to forget" node, the robot line and the early-access door.
 - **Sprite demo** (`sprite-kit/`, J's kit) gave her: the 2D sprite sheets (idle, talk, walk), her voice lines, and the colour palette (black, `#eaf6f8` ink, `#58e6ff` cyan, Orbitron + Sora).
@@ -43,35 +43,32 @@ Her name, huge, behind her: glass ANITA letters (thin cyan edges, see-through, s
 
 The other designs tried that day are kept to compare: `/?hero=0` the hero before, `2` she forms from specks of her own pixels (`heroform.js`), `4` a day with her, `5` inside her memory then the pull-back, `6` her in a scene (a framed window onto ANITA HQ). Desktop only.
 
-## ANITA at work: the whole page (25 Sep)
+## The work: Personal, Enterprise, R&D (25 Sep)
 
-Chosen 25 Sep: the page is no longer only the personal companion. It presents ANITA the company, one brain at work everywhere, with the companion as one chapter. The page runs in this order:
+On 25 Sep the page changed from the personal companion alone to everything the team does, with the companion as one part. Dee set the structure: **Personal** (the ANITA app), **Enterprise** (AI for welding and power plants, and physical AI for sugar de-bagging) and **R&D** (the ERP and other agentic workflows: "we are our first customer"). Clients are not named on the page, only the work. The page runs in this order:
 
 1. **Hero:** "One brain. At work everywhere." The chips around her are one memory from home, one from the office and one from a plant. The buttons are See the work and Hear her.
-2. **ANITA at work** (`#work`): six glass cards, each a kind of ANITA.
-   - ANITA for manufacturing (NEO ERP, BGR NEO)
-   - ANITA for power plants (ACC Sizing Suite, ENEXIO)
-   - ANITA for welding (BGRNEO WELD)
-   - ANITA in robots (sugar de-bagging)
-   - ANITA for you (the app)
-   - ANITA for your plant (an email to hello@aneeta.ai)
+2. **The work** (`#work`): "Personal. Enterprise. R&D." Glass cards sit in three groups, each with a heading row:
+   - **Personal:** the ANITA app, as one wide card, led by "Ask her what you were worried about last Tuesday." It links down to the personal chapter.
+   - **Enterprise:** robotic welding, power-plant cooling design, and robotic sugar de-bagging (physical AI).
+   - **R&D:** an ERP that runs on agents, and "Yours, next", an email to hello@aneeta.ai.
 
    A soft light follows the cursor inside each card.
-3. **ANITA Industrial** (`#industrial`): "An AI department inside your building". It gives four ways ANITA comes to work, then the road: the office → the floor → the machines → humanoids, lit where work is under way.
-4. **ANITA for you** (`#personal`): the page's first hero words, "She remembers what every AI forgets." After them come the memory scene, "You choose what she forgets" and the walk, all as before.
+3. **Enterprise** (`#enterprise`): "An AI department inside your building". It gives four ways we come to work, then the road: the office → the floor → the machines → humanoids, lit where work is under way.
+4. **Personal, the ANITA app** (`#personal`): the page's first hero words, "She remembers what every AI forgets." After them come the memory scene, "You choose what she forgets" and the walk, all as before.
 5. **What runs today:** as before.
-6. **Two doors** (`#door`): "For you" is early access, which opens the panel. "For your plant" is an email to the team.
+6. **Two doors** (`#door`): "For you" is early access, which opens the panel. "For your company" is an email to the team.
 
-The nav is Work · Industrial · Personal · Robots · Contact. On phones narrower than 375px, Robots drops out of the nav; the footer still has it. Split headings keep a `<br>` as a forced line break (`splitLines` in `main.js`), so the hero always breaks after "One brain."
+The nav is Work · Enterprise · Personal · Robots · Contact. On phones narrower than 375px, Robots drops out of the nav; the footer still has it. Split headings keep a `<br>` as a forced line break (`splitLines` in `main.js`), so the hero always breaks after "One brain."
 
-The shape comes from the vision board's ANITA Industrial page (`Dee-Nith/aneeta-vision`, `industrial.html`). The facts come from the project folders on the Desktop (`neo-erp`, `Enexio_ACC_Software`, `welding-software`). The copy only claims what those sources say:
+The shape comes from the vision board's ANITA Industrial page (`Dee-Nith/aneeta-vision`, `industrial.html`). The facts come from the team's own project folders. The copy only claims what those sources say:
 
 - The welding card says **AI next**, not AI inside. Its seam finding is geometric, and camera inspection is a plan.
 - The sugar de-bagging card says no more than the vision board does, since there is no repo or document for it.
 - "The role remembers" is written as a design aim ("Designed to…"), because the vision board marks it as by design, not built.
-- No client data, pricing or project names are used.
+- No client names, client data, pricing or project names are used.
 
-Where the memory graph sits (`places` in `main.js`): it steps aside, small and faint in the corner, for the two work sections. It comes back to the middle for "ANITA for you", where the vow picks it up.
+Where the memory graph sits (`places` in `main.js`): it steps aside, small and faint in the corner, for the work and Enterprise. It comes back to the middle for Personal, where the vow picks it up.
 
 ## ANITA in 3D (try it: http://127.0.0.1:8791/?3d)
 

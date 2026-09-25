@@ -418,6 +418,22 @@ body.pre-real .her { opacity: 0; filter: brightness(2.4) saturate(0) drop-shadow
 .wc-you { background: rgba(88,230,255,.05); border-style: dashed; border-color: rgba(88,230,255,.35); }
 .wc-you p { margin-bottom: 1.6em; }
 .wc-you .btn.small { margin-top: auto; align-self: flex-start; }
+/* Dee's three kinds of work (25 Sep): a heading row across the grid for each group */
+.wg { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 18px; margin-top: 7vh; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+.work-grid > .wg:first-child { margin-top: 0; }
+.wg b { font-family: var(--font-display); font-weight: 500; font-size: .8rem; letter-spacing: .28em; text-transform: uppercase; color: var(--cyan); }
+.wg span { color: var(--dim); font-size: .95rem; }
+.work-grid > li.wide { grid-column: 1 / -1; }
+.work-grid > li.span2 { grid-column: span 2; }
+/* the personal card runs across the grid: its top row across the card, then its words on the left and what is
+   inside on the right */
+.wc-wide { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); column-gap: 48px; }
+.wc-wide > .wc-top { grid-column: 1 / -1; }
+.wc-main { display: flex; flex-direction: column; }
+.wc-side { display: flex; flex-direction: column; justify-content: flex-end; }
+.wc-wide h3 { font-size: clamp(1.6rem, 2.6vw, 2.4rem); max-width: 18ch; }
+.wc-side .wc-stack { margin-top: 0; }
+.wc-side .btn.small { align-self: flex-start; }
 
 /* ───────────── ANITA Industrial: how she comes to work, four ways, then the road it is on */
 .industrial { position: relative; padding: 10vh var(--pad) 14vh; }
@@ -614,6 +630,9 @@ body.no-js-gate .gate { display: none; }
   .fact-grid li { border-right: 0; border-bottom: 1px solid var(--line); padding-left: 0 !important; }
   .versus li { grid-template-columns: 1fr; gap: 6px; }
   .work-grid { grid-template-columns: 1fr; }
+  .work-grid > li.span2 { grid-column: auto; }
+  .wc-wide { grid-template-columns: 1fr; }
+  .wg { margin-top: 5vh; }
   .ways { grid-template-columns: 1fr; }
   .ways li, .ways li + li { padding: 22px 0; border-left: 0; }
   .ways li + li { border-top: 1px solid var(--line); }

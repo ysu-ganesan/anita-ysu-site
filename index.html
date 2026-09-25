@@ -67,7 +67,7 @@
   <a class="brand" href="#top" data-cursor="top"><img src="assets/emblem-64.png" alt="" width="28" height="28"><span>ANITA</span></a>
   <nav class="pill" aria-label="Sections">
     <a href="#work">Work</a>
-    <a href="#industrial">Industrial</a>
+    <a href="#enterprise">Enterprise</a>
     <a href="#personal">Personal</a>
     <a href="#walk">Robots</a>
     <a href="#door" class="cta">Contact</a>
@@ -105,7 +105,7 @@
          (videotrack.js). Used as soon as assets/anita-look.mp4 exists; until then the sprite version stands in. -->
     <video class="hero-video" id="hero-video" muted playsinline preload="auto" aria-hidden="true" hidden></video>
     <div class="hero-copy">
-      <div class="k reveal-fade">ANITA · AI for home and industry</div>
+      <div class="k reveal-fade">ANITA · Personal and enterprise AI</div>
       <h1 class="split" data-gate>One brain.<br>At work <em>everywhere.</em></h1>
       <p class="lede reveal-fade">At home, she remembers your life. At work, she drafts the paperwork, sizes power-plant cooling and programs welding robots.</p>
       <div class="row reveal-fade">
@@ -150,39 +150,60 @@
   </div>
 </section>
 
-<!-- ═════════════════ ANITA at work (25 Sep): every kind of ANITA, first thing after the hero. The team's work,
-     from the vision board's ANITA Industrial door (Dee-Nith/aneeta-vision, industrial.html) and the project
-     folders. Claims stay inside what those say -->
+<!-- ═════════════════ the work (25 Sep, Dee's structure): Personal, Enterprise, R&D, first thing after the hero.
+     From the vision board's ANITA Industrial door (Dee-Nith/aneeta-vision, industrial.html) and the project folders.
+     Clients are not named, only the work; claims stay inside what the sources say -->
 <section class="work" id="work">
   <div class="work-head">
-    <div class="k">ANITA at work</div>
-    <h2 class="split">Where ANITA works&nbsp;today.</h2>
-    <p class="lede reveal-fade">Each one is ANITA, shaped for a different job: agents inside a manufacturer's ERP, a design engine for power plants, programs for welding robots, eyes for a robot cell, and a companion <b>who remembers you</b>.</p>
+    <div class="k">The work</div>
+    <h2 class="split">Personal. Enterprise. R&amp;D.</h2>
+    <p class="lede reveal-fade">At home, a companion that remembers your life. In industry, AI for welding, power plants and robot cells. In R&amp;D, agentic workflows, and <b>we are our first customer</b>.</p>
   </div>
 
   <ul class="work-grid">
+    <li class="wg reveal-fade"><b>Personal</b><span>For you: an AI that remembers your life.</span></li>
+    <li class="wide reveal-fade">
+      <article class="wc wc-wide">
+        <div class="wc-top">
+          <span class="wc-icon" aria-hidden="true"><img src="assets/emblem-64.png" alt="" width="26" height="26"></span>
+          <span class="wc-n">01</span>
+        </div>
+        <div class="wc-main">
+          <div class="wc-tag">The ANITA app · iPhone first</div>
+          <h3>Ask her what you were worried about last&nbsp;Tuesday.</h3>
+          <p>A personal AI with a private memory of your life: every conversation, person, plan and decision, kept and brought back exactly when you need it. The iPhone app is in development.</p>
+        </div>
+        <div class="wc-side">
+          <p class="wc-ai"><b>AI inside</b>Five layers of memory, three thinking modes and full-duplex voice. Her memory lives with you, and one day it walks into a robot body.</p>
+          <ul class="wc-stack"><li>iOS</li><li>Local models</li><li>Voice</li><li>Memory</li></ul>
+          <a class="btn small ghost" href="#personal" data-cursor="meet her">Meet her ↓</a>
+        </div>
+      </article>
+    </li>
+
+    <li class="wg reveal-fade"><b>Enterprise</b><span>AI for industry, from the design office to the factory floor.</span></li>
     <li class="reveal-fade">
       <article class="wc">
         <div class="wc-top">
-          <span class="wc-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="2.5" y="3" width="7" height="5.5" rx="1.2"/><rect x="14.5" y="3" width="7" height="5.5" rx="1.2"/><rect x="8.5" y="15.5" width="7" height="5.5" rx="1.2"/><path d="M9.5 5.75h5M6 8.5V12h12V8.5M12 12v3.5"/></svg></span>
-          <span class="wc-n">01</span>
+          <span class="wc-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 21h8M5 21v-2.5h4V21M7 18.5 9.5 11l6-3M16.6 9 19 13.5"/><circle cx="9.5" cy="11" r="1.4"/><circle cx="15.5" cy="8" r="1.4"/><path d="M20.5 16.2l.9 1.1M18.6 16.8l-.3 1.4M21.3 14.4l1.3-.2"/></svg></span>
+          <span class="wc-n">02</span>
         </div>
-        <div class="wc-tag">NEO ERP · for BGR NEO</div>
-        <h3>ANITA for manufacturing</h3>
-        <p>BGR NEO builds automation machines to order. We are rebuilding their ERP one module at a time: every step of their process becomes a screen, every document a record, every approval a gate.</p>
-        <p class="wc-ai"><b>AI inside</b>Eleven agents that remember, draft, check and chase. They find and grade sales leads, read customers' RFQs, and match each enquiry to the closest machine built before. AI never signs: all 32 signatures stay with people.</p>
-        <ul class="wc-stack"><li>React</li><li>TypeScript</li><li>FastAPI</li><li>Spring Boot</li><li>LLM agents</li><li>OCR</li></ul>
+        <div class="wc-tag">AI · Fabrication</div>
+        <h3>Robotic welding</h3>
+        <p>Give it the 3D model of a fabricated part. It finds the weld seams and ranks them, an operator confirms and orders them, and it plans the torch paths and writes the program for ABB and Yaskawa robots.</p>
+        <p class="wc-ai next"><b>AI next</b>Cameras that inspect every finished weld. Today a digital twin of the cell already checks every move for reach and collisions before a robot runs it.</p>
+        <ul class="wc-stack"><li>Python</li><li>OpenCASCADE</li><li>PyQt6</li><li>RoboDK</li><li>ABB RAPID</li><li>Yaskawa INFORM</li></ul>
       </article>
     </li>
     <li class="reveal-fade" style="--d:.1s">
       <article class="wc">
         <div class="wc-top">
           <span class="wc-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><circle cx="12" cy="12" r="1.6"/><path d="M12 10.4c-.6-2.6.2-5 2.4-5.4 1.9-.3 2.6 1.9 1 3.4-1 .9-2.2 1.5-3.4 2M13.6 12c2.6-.6 5 .2 5.4 2.4.3 1.9-1.9 2.6-3.4 1-.9-1-1.5-2.2-2-3.4M12 13.6c.6 2.6-.2 5-2.4 5.4-1.9.3-2.6-1.9-1-3.4 1-.9 2.2-1.5 3.4-2M10.4 12c-2.6.6-5-.2-5.4-2.4-.3-1.9 1.9-2.6 3.4-1 .9 1 1.5 2.2 2 3.4"/></svg></span>
-          <span class="wc-n">02</span>
+          <span class="wc-n">03</span>
         </div>
-        <div class="wc-tag">ACC Sizing Suite · for ENEXIO</div>
-        <h3>ANITA for power plants</h3>
-        <p>Air-cooled condensers let a power plant cool its steam with air instead of water. Our suite replaces a decades-old design program: from a customer's brief it sizes the condenser for an 800&nbsp;MW-class plant in 1.6&nbsp;seconds, checked against the old program on hundreds of past projects.</p>
+        <div class="wc-tag">AI · Power plants</div>
+        <h3>Power-plant cooling design</h3>
+        <p>Air-cooled condensers let a power plant cool its steam with air instead of water. Our design suite replaces a decades-old program: from a customer's brief it sizes the condenser for an 800&nbsp;MW-class plant in 1.6&nbsp;seconds, checked against the old program on hundreds of past projects.</p>
         <p class="wc-ai"><b>AI inside</b>A machine-learning twin, trained only on the engine's own results, screens design options in moments. The full physics engine then re-checks every design it shortlists.</p>
         <ul class="wc-stack"><li>Python</li><li>SciPy</li><li>CoolProp</li><li>FastAPI</li><li>Next.js</li><li>three.js</li></ul>
       </article>
@@ -190,63 +211,52 @@
     <li class="reveal-fade" style="--d:.2s">
       <article class="wc">
         <div class="wc-top">
-          <span class="wc-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 21h8M5 21v-2.5h4V21M7 18.5 9.5 11l6-3M16.6 9 19 13.5"/><circle cx="9.5" cy="11" r="1.4"/><circle cx="15.5" cy="8" r="1.4"/><path d="M20.5 16.2l.9 1.1M18.6 16.8l-.3 1.4M21.3 14.4l1.3-.2"/></svg></span>
-          <span class="wc-n">03</span>
-        </div>
-        <div class="wc-tag">BGRNEO WELD · with BGR NEO</div>
-        <h3>ANITA for welding</h3>
-        <p>Give it the 3D model of a fabricated part. It finds the weld seams and ranks them, an operator confirms and orders them, and it plans the torch paths and writes the program for ABB and Yaskawa robots.</p>
-        <p class="wc-ai next"><b>AI next</b>Cameras that inspect every finished weld. Today a digital twin of the cell already checks every move for reach and collisions before a robot runs it.</p>
-        <ul class="wc-stack"><li>Python</li><li>OpenCASCADE</li><li>PyQt6</li><li>RoboDK</li><li>ABB RAPID</li><li>Yaskawa INFORM</li></ul>
-      </article>
-    </li>
-    <li class="reveal-fade">
-      <article class="wc">
-        <div class="wc-top">
           <span class="wc-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 7V3.5h3.5M17.5 3.5H21V7M21 17v3.5h-3.5M6.5 20.5H3V17"/><path d="M9.5 7h5l-.8 1.6c1.9 1.2 2.8 3.2 2.8 5.2 0 2.2-1.4 3.7-3.5 3.7h-2c-2.1 0-3.5-1.5-3.5-3.7 0-2 .9-4 2.8-5.2z"/></svg></span>
           <span class="wc-n">04</span>
         </div>
-        <div class="wc-tag">Sugar de-bagging · physical AI</div>
-        <h3>ANITA in robots</h3>
+        <div class="wc-tag">Physical AI · Factory floor</div>
+        <h3>Robotic sugar de-bagging</h3>
         <p>Emptying sacks of sugar by hand is heavy, dusty and endlessly repetitive. Our first physical-AI project is a robot cell that takes the job over.</p>
         <p class="wc-ai"><b>AI inside</b>Perception-driven robotics: the robot works from what it sees, not from a fixed script. It is where our software agents become machines that move.</p>
         <ul class="wc-stack"><li>Computer vision</li><li>Robotics</li></ul>
       </article>
     </li>
-    <li class="reveal-fade" style="--d:.1s">
+
+    <li class="wg reveal-fade"><b>R&amp;D</b><span>Agentic workflows. We are our first customer.</span></li>
+    <li class="span2 reveal-fade">
       <article class="wc">
         <div class="wc-top">
-          <span class="wc-icon" aria-hidden="true"><img src="assets/emblem-64.png" alt="" width="26" height="26"></span>
+          <span class="wc-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="2.5" y="3" width="7" height="5.5" rx="1.2"/><rect x="14.5" y="3" width="7" height="5.5" rx="1.2"/><rect x="8.5" y="15.5" width="7" height="5.5" rx="1.2"/><path d="M9.5 5.75h5M6 8.5V12h12V8.5M12 12v3.5"/></svg></span>
           <span class="wc-n">05</span>
         </div>
-        <div class="wc-tag">The companion app · iPhone first</div>
-        <h3>ANITA for you</h3>
-        <p>A personal AI with a private memory of your life. Her engine runs today. The iPhone app is in development.</p>
-        <p class="wc-ai"><b>AI inside</b>Five layers of memory, three thinking modes and full-duplex voice. Her memory lives with you, and one day it walks into a robot body.</p>
-        <ul class="wc-stack"><li>iOS</li><li>Local models</li><li>Voice</li><li>Memory</li></ul>
+        <div class="wc-tag">Agentic workflows · ERP</div>
+        <h3>An ERP that runs on agents</h3>
+        <p>A machine builder's whole process, rebuilt one module at a time: every step becomes a screen, every document a record, every approval a gate.</p>
+        <p class="wc-ai"><b>AI inside</b>Eleven agents that remember, draft, check and chase. They find and grade sales leads, read customers' RFQs, and match each enquiry to the closest machine built before. AI never signs: all 32 signatures stay with people.</p>
+        <ul class="wc-stack"><li>React</li><li>TypeScript</li><li>FastAPI</li><li>Spring Boot</li><li>LLM agents</li><li>OCR</li></ul>
       </article>
     </li>
-    <li class="reveal-fade" style="--d:.2s">
+    <li class="reveal-fade" style="--d:.1s">
       <article class="wc wc-you">
         <div class="wc-top">
           <span class="wc-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
           <span class="wc-n">06</span>
         </div>
         <div class="wc-tag">Your workflow · next</div>
-        <h3>ANITA for your plant</h3>
-        <p>If someone in your plant reads and re-types all day, that work is a candidate: quotes, shift reports, maintenance logs, tenders. We map one workflow with you and tell you honestly if ANITA fits.</p>
+        <h3>Yours, next.</h3>
+        <p>If someone in your company reads and re-types all day, that work is a candidate: quotes, shift reports, maintenance logs, tenders. We map one workflow with you and tell you honestly if it fits.</p>
         <a class="btn small" href="mailto:hello@aneeta.ai?subject=Bring%20ANITA%20to%20work" data-cursor="hello@aneeta.ai">Write to us</a>
       </article>
     </li>
   </ul>
 </section>
 
-<!-- ═════════════════ ANITA Industrial: how she comes to work (the vision board's industrial door), and the road it is on -->
-<section class="industrial" id="industrial">
+<!-- ═════════════════ Enterprise: how we come to work (the vision board's industrial door), and the road it is on -->
+<section class="industrial" id="enterprise">
   <div class="work-head">
-    <div class="k">ANITA Industrial</div>
+    <div class="k">Enterprise</div>
     <h2 class="split">An AI department inside your&nbsp;building.</h2>
-    <p class="lede reveal-fade">Factories, plants and engineering teams run on repetitive knowledge work, and their data <b>can't go to the cloud</b>. So ANITA comes to them: a team of agents built around how the company already works.</p>
+    <p class="lede reveal-fade">Factories, plants and engineering teams run on repetitive knowledge work, and their data <b>can't go to the cloud</b>. So we come to them: a team of agents built around how the company already works.</p>
   </div>
   <ol class="ways">
     <li class="reveal-fade"><b>On your premises</b><span>Built to run on your own machines, so drawings, prices and people's names stay in the building.</span></li>
@@ -259,17 +269,17 @@
   <div class="road">
     <div class="k reveal-fade">Where it goes</div>
     <ol class="road-steps">
-      <li class="reveal-fade on"><i aria-hidden="true"></i><b>The office</b><span>Agents draft, check and chase. People approve.</span><em>NEO ERP · ACC Sizing Suite</em></li>
+      <li class="reveal-fade on"><i aria-hidden="true"></i><b>The office</b><span>Agents draft, check and chase. People approve.</span><em>ERP agents · Power-plant design</em></li>
       <li class="reveal-fade" style="--d:.1s"><i aria-hidden="true"></i><b>The floor</b><span>Cameras on the line: inspection, defects, maintenance.</span><em>Next</em></li>
-      <li class="reveal-fade on" style="--d:.2s"><i aria-hidden="true"></i><b>The machines</b><span>Perception meets robots.</span><em>BGRNEO WELD · Sugar de-bagging</em></li>
+      <li class="reveal-fade on" style="--d:.2s"><i aria-hidden="true"></i><b>The machines</b><span>Perception meets robots.</span><em>Robotic welding · Sugar de-bagging</em></li>
       <li class="reveal-fade" style="--d:.3s"><i aria-hidden="true"></i><b>Humanoids</b><span>When robots are ready for factories, the brain is already installed.</span><em>Later</em></li>
     </ol>
   </div>
 </section>
 
-<!-- ═════════════════ ANITA for you: the personal chapter opens with the page's first hero words -->
+<!-- ═════════════════ Personal, the ANITA app: the personal chapter opens with the page's first hero words -->
 <section class="chapter" id="personal">
-  <div class="k reveal-fade">ANITA for you · personal AI</div>
+  <div class="k reveal-fade">Personal · the ANITA app</div>
   <h2 class="split">She remembers what every AI <em>forgets.</em></h2>
   <p class="lede reveal-fade">An assistant for the rest of your life. On your phone now. In a robot in your home later.</p>
 </section>
@@ -397,7 +407,7 @@
 </section>
 
 <!-- ═════════════════ the two doors: early access for you (its button opens why.zero.university's panel),
-     and ANITA for your plant (an email to the team) -->
+     and one for your company (an email to the team) -->
 <section class="door" id="door">
   <div class="doors">
     <div class="door-one">
@@ -407,7 +417,7 @@
       <button type="button" class="btn big reveal-fade" data-join>Get early access</button>
     </div>
     <div class="door-one">
-      <div class="k reveal-fade">For your plant</div>
+      <div class="k reveal-fade">For your company</div>
       <h2 class="split">Bring ANITA to&nbsp;work.</h2>
       <p class="lede reveal-fade">Tell us the job someone re-types all day. We will map it with you, and tell you honestly if ANITA fits.</p>
       <a class="btn big ghost reveal-fade" href="mailto:hello@aneeta.ai?subject=Bring%20ANITA%20to%20work" data-cursor="hello@aneeta.ai">Write to us</a>
@@ -422,8 +432,8 @@
     <div class="foot-col">
       <h4>ANITA</h4>
       <ul>
-        <li><a href="#work">At work</a></li>
-        <li><a href="#industrial">Industrial</a></li>
+        <li><a href="#work">The work</a></li>
+        <li><a href="#enterprise">Enterprise</a></li>
         <li><a href="#personal">Personal</a></li>
         <li><a href="#yours">Privacy</a></li>
         <li><a href="#walk">Robots</a></li>
