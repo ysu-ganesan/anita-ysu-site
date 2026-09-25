@@ -47,9 +47,8 @@ export class Anita {
 
   // The reel's method (a Framer cursor-tracking component scrubbing one Veo clip along an axis): the cursor's
   // left-right position scrubs straight through one continuous, blink-free take of her turning her head, frames
-  // `sweep` of J's gaze clip (51 → 112, looking left → right). Nothing jumps across the clip any more; she moves
-  // through neighbouring frames only. Frames 57–67 were a blink in J's take; they are now in-betweens made from
-  // the open-eyed frames 56 and 68 (25 Sep), so she can turn fully left without blinking. The target is fractional: where her measured direction crosses the cursor's.
+  // `sweep` of J's gaze clip (67 → 112, looking left → right). Nothing jumps across the clip any more; she moves
+  // through neighbouring frames only. The target is fractional: where her measured direction crosses the cursor's.
   _gazeTarget(g, home) {
     const m = g.meta, yaw = m.yaw, [a, b] = m.sweep || [0, m.frames - 1];
     const L = yaw[a], R = yaw[b];                            // her furthest left and right in the take
