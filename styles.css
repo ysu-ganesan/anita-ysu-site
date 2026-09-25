@@ -175,10 +175,12 @@ body.pre-real .her { opacity: 0; filter: brightness(2.4) saturate(0) drop-shadow
 .look-video .her { display: none; }
 .sprite { display: block; }
 /* ── hero design 1 (/?hero=1, main.js → HERO): her name, huge, behind her. The letters are glass: thin cyan edges
-   and a faint fill, so her memory graph shows through them. She stands in the middle, in front of them */
+   and a faint fill, so her memory graph shows through them. She stands in the middle, in front of them.
+   Lettered like the logo (25 Sep): the same Orbitron, spaced .32em apart as .brand is. Spread that wide, A N I T A is
+   4.76em across (3.48em of letters + 4 gaps), so 19.5vw keeps it inside the margins it had before */
 .wordmark { display: none; }
-.hero-v1 .wordmark { display: flex; position: absolute; left: 0; right: 0; top: 11vh; justify-content: center; gap: 1.4vw; z-index: 1; pointer-events: none;
-  font-family: var(--font-display); font-weight: 700; font-size: min(25vw, 44vh); line-height: .8; }
+.hero-v1 .wordmark { display: flex; position: absolute; left: 0; right: 0; top: 11vh; justify-content: center; gap: .32em; z-index: 1; pointer-events: none;
+  font-family: var(--font-display); font-weight: 700; font-size: min(19.5vw, 44vh); line-height: .8; }
 .hero-v1 .wordmark span { display: block; color: rgba(88,230,255,.05); -webkit-text-stroke: 1.5px rgba(88,230,255,.5); text-shadow: 0 0 70px rgba(88,230,255,.22);
   opacity: 0; transform: translateY(35%); transition: transform 1.6s var(--ease-out), opacity 1.3s var(--ease-soft); transition-delay: calc(var(--i) * 110ms + .15s); }
 .hero-v1 .wordmark.is-in span { opacity: 1; transform: none; }
@@ -188,7 +190,7 @@ body.pre-real .her { opacity: 0; filter: brightness(2.4) saturate(0) drop-shadow
 .hero-v1 .hero-copy .k { margin-bottom: 1em; }
 .hero-v1 .hero-copy .lede { font-size: .95rem; }
 @media (max-width: 800px) {   /* phones: words at the top as before; her name behind her upper body, as wide as the screen allows */
-  .hero-v1 .wordmark { top: auto; bottom: 29vh; font-size: 18.5vw; gap: 1vw; }
+  .hero-v1 .wordmark { top: auto; bottom: 29vh; font-size: 18.5vw; }   /* spaced like the logo it is 88vw wide */
   .hero-v1 .hero-copy { top: 13vh; bottom: auto; max-width: none; }
   .hero-v1 .hero-copy h1 { font-size: clamp(2rem, 8.5vw, 2.6rem); }
 }

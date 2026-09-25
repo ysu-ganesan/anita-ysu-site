@@ -39,7 +39,7 @@ The sprite sheets in `assets/sprites/` are J's, re-packed at 450×800 per frame.
 
 ## The hero (design 1, chosen 24 Sep)
 
-Her name, huge, behind her: glass ANITA letters (thin cyan edges, see-through, so her memory graph glows through them), her standing in front of them in the middle, the headline and buttons at the bottom left. The letters rise in one by one after the gate, drift gently against the cursor, and spread apart and fade as the call comes in while she glides to the right. Phones: headline at the top, her centred, her name behind her. Code: `.wordmark` in `index.html`, `.hero-v1` in `styles.css`, `HERO === 1` in `main.js`.
+Her name, huge, behind her: glass ANITA letters (thin cyan edges, see-through, so her memory graph glows through them), lettered like the logo since 25 Sep (the same Orbitron, spaced .32em apart like the top-left logo). She stands in front of them in the middle, the headline and buttons at the bottom left. The letters rise in one by one after the gate, drift gently against the cursor, and spread apart and fade as the call comes in while she glides to the right. Phones: headline at the top, her centred, her name behind her. Code: `.wordmark` in `index.html`, `.hero-v1` in `styles.css`, `HERO === 1` in `main.js`.
 
 The other designs tried that day are kept to compare: `/?hero=0` the hero before, `2` she forms from specks of her own pixels (`heroform.js`), `4` a day with her, `5` inside her memory then the pull-back, `6` her in a scene (a framed window onto ANITA HQ). Desktop only.
 
