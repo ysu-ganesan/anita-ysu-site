@@ -357,8 +357,13 @@ body.pre-real .her { opacity: 0; filter: brightness(2.4) saturate(0) drop-shadow
 .walk-her { z-index: 1; }
 .walk-her { position: absolute; left: 50%; bottom: 4vh; height: 62vh; aspect-ratio: 450 / 800; transform: translateX(-50%); }
 .walk-her .sprite { width: 100%; height: 100%; }
-.walk-head { position: absolute; left: var(--pad); top: 14vh; max-width: 560px; z-index: 2; text-shadow: 0 2px 30px rgba(0,0,0,.9); }
-.walk-head h2 { margin-top: .5em; }
+.walk-head { position: absolute; left: var(--pad); top: 14vh; max-width: 40vw; z-index: 2; text-shadow: 0 2px 30px rgba(0,0,0,.9); }
+/* the robot line (25 Sep), big: "As robots rise," then "ANITA rises with them." in cyan, kept left of her as she walks */
+.walk-head h2 { margin-top: .5em; font-size: clamp(2.2rem, 4.7vw, 5.2rem); line-height: 1; }
+/* it has to read over HQ's lit glass and the hologram too: a soft dark pool behind it, and a dark edge on the cyan */
+.walk-head::before { content: ''; position: absolute; z-index: -1; inset: -10vh -10vw -8vh -14vw; pointer-events: none;
+  background: radial-gradient(closest-side, rgba(0,0,0,.72), rgba(0,0,0,.4) 55%, transparent); }
+.walk-head h2 em { text-shadow: 0 0 14px rgba(0,0,0,.9), 0 0 40px rgba(88,230,255,.3); }
 .signs { list-style: none; margin: 0; padding: 0; }
 .signs li { position: absolute; left: 0; top: 0; width: 260px; padding: 14px 16px; border-radius: 14px; background: var(--glass); border: 1px solid var(--line);
   backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); font-size: .85rem; line-height: 1.45; color: var(--ink); opacity: 0; will-change: transform, opacity; transform-origin: 50% 100%; }
@@ -626,7 +631,7 @@ body.no-js-gate .gate { display: none; }
   .mind-head h2 { font-size: 2rem; }
   .mind-head .lede { font-size: .92rem; }
   .yours { grid-template-columns: 1fr; }
-  .walk-head { top: 11vh; right: var(--pad); }
+  .walk-head { top: 11vh; right: var(--pad); max-width: none; }
   .walk-her { height: 46vh; }
   .signs li { width: 210px; font-size: .78rem; }
   .odo { bottom: auto; top: 11vh; display: none; }
