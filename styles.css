@@ -423,6 +423,12 @@ body.pre-real .her { opacity: 0; filter: brightness(2.4) saturate(0) drop-shadow
 .work-grid > .wg:first-child { margin-top: 0; }
 .wg b { font-family: var(--font-display); font-weight: 500; font-size: .8rem; letter-spacing: .28em; text-transform: uppercase; color: var(--cyan); }
 .wg span { color: var(--dim); font-size: .95rem; }
+/* the parts inside Enterprise (AI & Physical AI, R&D): smaller, lighter rules, so they read as belonging to it */
+.wg.sub { margin-top: 5vh; padding-bottom: 10px; border-bottom-color: var(--hair); }
+.wg + .wg.sub { margin-top: 3vh; }
+.wg.sub b { font-size: .62rem; letter-spacing: .24em; color: var(--ink); }
+.wg.sub b::before { content: ''; display: inline-block; width: 6px; height: 6px; margin-right: 10px; vertical-align: 1px; background: var(--cyan); box-shadow: 0 0 8px var(--cyan); }
+.wg.sub span { font-size: .88rem; }
 .work-grid > li.wide { grid-column: 1 / -1; }
 /* the personal card runs across the grid: its top row across the card, then its words on the left and what is
    inside on the right */

@@ -45,13 +45,13 @@ The other designs tried that day are kept to compare: `/?hero=0` the hero before
 
 ## The work: Personal, Enterprise, R&D (25 Sep)
 
-On 25 Sep the page changed from the personal companion alone to everything the team does, with the companion as one part. Dee set the structure: **Personal** (the ANITA app), **Enterprise** (the ERP, AI for welding and power plants, and physical AI for sugar de-bagging) and **R&D** (the agentic workflows, where "we are our first customer", and R&D work for any client who asks). Clients are not named on the page, only the work. The page runs in this order:
+On 25 Sep the page changed from the personal companion alone to everything the team does, with the companion as one part. Dee set the structure, in two groups: **1. Personal** (the ANITA app) and **2. Enterprise**. Enterprise has two parts inside it. **AI & Physical AI** (one part) is the ERP, welding, power-plant design and sugar de-bagging. **R&D** is the agentic workflows and R&D work for any client who asks. For R&D, "we are our first customer": each workflow is built and proven on our own work, then goes into client products like the ERP. Clients are not named on the page, only the work. The page runs in this order:
 
 1. **Hero:** "One brain. At work everywhere." The chips around her are one memory from home, one from the office and one from a plant. The buttons are See the work and Hear her.
-2. **The work** (`#work`): "Personal. Enterprise. R&D." Glass cards sit in three groups in a two-column grid, each with a heading row:
+2. **The work** (`#work`): "Personal. Enterprise." Glass cards sit in a two-column grid under heading rows. The Personal and Enterprise headings are big; the two parts inside Enterprise get smaller ones:
    - **Personal:** the ANITA app, as one wide card, led by "Ask her what you were worried about last Tuesday." It links down to the personal chapter.
-   - **Enterprise**, two by two: the ERP with agents inside, robotic welding, power-plant cooling design, and robotic sugar de-bagging (physical AI).
-   - **R&D:** agentic workflows ("we are our first customer"), and R&D for you (work on request, an email to hello@aneeta.ai).
+   - **Enterprise / AI & Physical AI**, two by two: the ERP with agents inside, robotic welding, power-plant cooling design, and robotic sugar de-bagging.
+   - **Enterprise / R&D:** agentic workflows ("we are our first customer"), and R&D for you (work on request, an email to hello@aneeta.ai).
 
    A soft light follows the cursor inside each card.
 3. **Enterprise** (`#enterprise`): "An AI department inside your building". It gives four ways we come to work, then the road: the office → the floor → the machines → humanoids, lit where work is under way.
