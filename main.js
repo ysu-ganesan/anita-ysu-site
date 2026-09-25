@@ -522,7 +522,7 @@ const places = [
   // Personal: her memory comes back to the middle, where the vow picks it up
   ['.chapter',    () => ({ x: 0.5, y: 0.5, r: narrow() ? 0.4 : 0.46, alpha: 0.3 })],
   // the mind scene: behind the vow, then behind her memory's heading, filling in as the moments are kept
-  ['.mind',    () => ({ x: 0.5, y: 0.5, r: mindP < 0.14 ? 0.46 : 0.4, alpha: mindP < 0.14 ? 0.3 : 0.5 })],
+  ['.mind',    () => ({ x: 0.5, y: 0.5, r: mindP < 0.19 ? 0.46 : 0.4, alpha: mindP < 0.19 ? 0.3 : 0.5 })],
   ['.yours',   inYours],
   // in the demo's city: into HQ's brain core (above). On the drawn road (no 3D) the sphere is home on the horizon
   ['.walk',    () => city ? (cityCore && graph.on ? intoCore() : { x: 0.5, y: 0.3, r: 0.1, alpha: 0 }) : { x: 0.5, y: 0.42 - 0.07 - walkP * 0.05, r: 0.05 + walkP * 0.1, alpha: 0.95 }],
@@ -548,7 +548,7 @@ function placeSphere() {
   // on the drawn road the sphere is home, on the horizon, and snaps there
   if (!city && w.top <= 0 && w.bottom >= innerHeight) Object.assign(sphere.at, sphere.want);
   const doorTop = $('.door').getBoundingClientRect().top;
-  sphere.grow = doorTop < innerHeight ? 1 : clamp(0.22 + kept * 0.16, 0, 0.9);
+  sphere.grow = doorTop < innerHeight ? 1 : clamp(0.22 + kept / cards.length * 0.64, 0, 0.9);
   // design 5: inside her memory it is full of you; it settles back to what she knows so far as you pull out
   if (HERO === 5 && heroP < 0.2) sphere.grow = lerp(0.85, sphere.grow, ss(0.01, 0.16 * 0.85, heroP));
 }
@@ -697,12 +697,12 @@ function frame(now) {
   if (mr.bottom > 0 && mr.top < innerHeight) {
     const W = innerWidth, H = innerHeight;
     // 1 · the vow grows until you pass through it
-    const z = ss(0.02, 0.15, mindP);
+    const z = ss(0.02, 0.2, mindP);
     vowLine.style.transform = `translate(-50%, -50%) scale(${(1 + z * z * 16).toFixed(3)})`;
-    vowLine.style.opacity = (1 - ss(0.07, 0.14, mindP)).toFixed(3);
-    vowLine.style.visibility = mindP > 0.15 ? 'hidden' : '';
+    vowLine.style.opacity = (1 - ss(0.1, 0.19, mindP)).toFixed(3);
+    vowLine.style.visibility = mindP > 0.2 ? 'hidden' : '';
     // 2 · her memory's heading comes out of that zoom, then moves up to make room for the moments
-    const e = ss(0.11, 0.22, mindP), up = ss(0.21, 0.27, mindP);
+    const e = ss(0.15, 0.3, mindP), up = ss(0.29, 0.37, mindP);
     const headY = narrow() ? -0.25 : -0.24;   // how far up it settles, as a share of the screen
     mindHead.style.opacity = e.toFixed(3);
     mindHead.style.transform = `translate(-50%, calc(-50% + ${(up * headY * H).toFixed(1)}px)) scale(${(lerp(0.4, 1, e) * lerp(1, 0.86, up)).toFixed(3)})`;
@@ -710,9 +710,9 @@ function frame(now) {
     mindHead.classList.toggle('is-on', e > 0.9);
     // 3 · the moments, one at a time in the same place: each fades up under the heading, plays, then
     //     dissolves into a node that flies into her memory (the sphere behind) and the next one appears
-    const cy = H * (narrow() ? 0.66 : 0.68);
+    const cy = H * (narrow() ? 0.66 : 0.68), M0 = 0.37, MS = (0.99 - M0) / cards.length;   // the moments share the rest of the scroll
     cards.forEach((card, i) => {
-      const s = 0.27 + i * 0.18, u = (mindP - s) / 0.18, node = nodes[i];
+      const s = M0 + i * MS, u = (mindP - s) / MS, node = nodes[i];
       if (u <= 0 || u >= 1) { card.style.opacity = 0; card.style.visibility = 'hidden'; node.style.opacity = 0; return; }
       card.style.visibility = '';
       const cw = card.offsetWidth, ch = card.offsetHeight, x = (W - cw) / 2, y = cy - ch / 2;

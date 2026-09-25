@@ -2,7 +2,7 @@
 
 A third ANITA page. Since 25 Sep it presents ANITA the company (one brain, at work everywhere) with the companion as one part; see "The work" below. It combines the other two pages in `anita-site`:
 
-- **ANITA site** (the folder root) gave the story and copy: the claim, then the proof moments (Maya, Mondays, Mum's pottery class, dubbed not subtitles), the "tap to forget" node, the robot line and the early-access door.
+- **ANITA site** (the folder root) gave the story and copy: the claim, then the proof moments (Maya, Mondays, Mum's pottery class, dubbed not subtitles; since 25 Sep this page keeps two of them, Mondays and Mum's pottery class, so the memory scene is about half as long: 420vh, was 760vh), the "tap to forget" node, the robot line and the early-access door.
 - **Sprite demo** (`sprite-kit/`, J's kit) gave her: the 2D sprite sheets (idle, talk, walk), her voice lines, and the colour palette (black, `#eaf6f8` ink, `#58e6ff` cyan, Orbitron + Sora).
 
 Static. No build step, no framework, no libraries, no tracking.

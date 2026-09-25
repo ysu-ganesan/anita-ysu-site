@@ -280,7 +280,7 @@ body.pre-real .her { opacity: 0; filter: brightness(2.4) saturate(0) drop-shadow
 .hero-talk .proof { margin-top: 1.2em; }
 
 /* ───────────── the vow and her memory: one pinned scene (driven by main.js) */
-.mind { position: relative; height: 760vh; }
+.mind { position: relative; height: 420vh; }   /* shortened 25 Sep (was 760vh with four moments): two moments now */
 .mind-pin { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
 /* no will-change: that would freeze the text as a picture at its normal size and stretch it; left alone,
    the browser redraws the letters crisply at every size of the zoom */
