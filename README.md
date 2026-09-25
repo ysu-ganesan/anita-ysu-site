@@ -45,13 +45,13 @@ The other designs tried that day are kept to compare: `/?hero=0` the hero before
 
 ## The work: Personal, Enterprise, R&D (25 Sep)
 
-On 25 Sep the page changed from the personal companion alone to everything the team does, with the companion as one part. Dee set the structure: **Personal** (the ANITA app), **Enterprise** (AI for welding and power plants, and physical AI for sugar de-bagging) and **R&D** (the ERP and other agentic workflows: "we are our first customer"). Clients are not named on the page, only the work. The page runs in this order:
+On 25 Sep the page changed from the personal companion alone to everything the team does, with the companion as one part. Dee set the structure: **Personal** (the ANITA app), **Enterprise** (the ERP, AI for welding and power plants, and physical AI for sugar de-bagging) and **R&D** (the agentic workflows, where "we are our first customer", and R&D work for any client who asks). Clients are not named on the page, only the work. The page runs in this order:
 
 1. **Hero:** "One brain. At work everywhere." The chips around her are one memory from home, one from the office and one from a plant. The buttons are See the work and Hear her.
-2. **The work** (`#work`): "Personal. Enterprise. R&D." Glass cards sit in three groups, each with a heading row:
+2. **The work** (`#work`): "Personal. Enterprise. R&D." Glass cards sit in three groups in a two-column grid, each with a heading row:
    - **Personal:** the ANITA app, as one wide card, led by "Ask her what you were worried about last Tuesday." It links down to the personal chapter.
-   - **Enterprise:** robotic welding, power-plant cooling design, and robotic sugar de-bagging (physical AI).
-   - **R&D:** an ERP that runs on agents, and "Yours, next", an email to hello@aneeta.ai.
+   - **Enterprise**, two by two: the ERP with agents inside, robotic welding, power-plant cooling design, and robotic sugar de-bagging (physical AI).
+   - **R&D:** agentic workflows ("we are our first customer"), and R&D for you (work on request, an email to hello@aneeta.ai).
 
    A soft light follows the cursor inside each card.
 3. **Enterprise** (`#enterprise`): "An AI department inside your building". It gives four ways we come to work, then the road: the office → the floor → the machines → humanoids, lit where work is under way.
