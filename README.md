@@ -34,6 +34,13 @@ Open http://127.0.0.1:8791/. It needs internet only for the Google Fonts.
 2. Clips cut in on frame 0, the master pose.
 3. One clip at a time, and each finishes its motion before the next.
 4. ~~She does not follow the mouse.~~ Changed on 23 Sep by request: in the hero she looks at the cursor, done the way the reference reel does it (a Framer cursor-tracking component scrubbing one Veo clip along an axis). The cursor's left-right position scrubs through one continuous, blink-free take of her turning her head: frames 67-112 of J's `gaze` clip, re-cut into `assets/sprites/gaze-*.webp` with every frame's measured direction in `gaze.json` (`sweep`). Each screen edge is her full turn that way. A small nod drawn from her own frames adds up/down. She cuts in and out on the take's centre frame. Turn it off by not loading `gaze` in `main.js`.
+5. **25 Sep, on Dee's feedback** ("she reacts one way at rest and another while scrolling; make her human, not glitches"):
+   - **Scrolling doesn't change what she does.** She no longer turns forward at 20% of the hero, and no longer moves her mouth silently in the call beat. The call's words still come in with the scroll.
+   - **She speaks when clicked, and stops when clicked again.** On a phone, tapping her words also stops her, because that bar sits over her feet there. A drag beside her still turns her memory. Over her the cursor says "talk to her", and "stop" while she speaks.
+   - **She looks at you while the mouse moves.** After 2.5 s of stillness (`LOOK_REST`) she relaxes back into her own breathing and blinking, instead of holding a stare.
+   - **Rule 1 is bent.** A clip change is a 0.15 s dissolve (`BLEND` in `sprite.js`; 0 gives J's hard cut back), because hard cuts between these renders read as glitches.
+   - **She turns only from matching frames.** She starts to look only from idle frames whose pose matches the gaze clip's centre (`lookFrom` in `idle.json`, measured). She holds that pose until the dissolve ends, so the blended frames match.
+   - **She stops fast.** When she stops talking she settles within 0.4 s, rather than finishing a two-second gesture.
 
 The sprite sheets in `assets/sprites/` are J's, re-packed at 450×800 per frame. The originals are 720×1280 and decode to about 240 MB per page. The format is the same as the kit's README describes. The talk clip loads after you enter, and the walk clip loads when the road is near.
 

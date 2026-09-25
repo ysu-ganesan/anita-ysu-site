@@ -170,9 +170,10 @@ $('#enter-quiet').addEventListener('click', () => enter(false));
 // chips: they drift on their own and lean away from the mouse
 $$('.chip').forEach((c, i) => { c.style.setProperty('--n', i); c.classList.add('chip-float'); });
 let mx = 0, my = 0;
-const ptr = { x: 0, y: 0, on: false };   // a real mouse on the page: she looks at it
+const ptr = { x: 0, y: 0, on: false, at: 0 };   // a real mouse on the page: she looks at it (at: when it last moved)
+const LOOK_REST = 2.5;   // seconds after the mouse stops before she relaxes back into her own breathing
 addEventListener('pointermove', e => { mx = e.clientX / innerWidth - 0.5; my = e.clientY / innerHeight - 0.5;
-  if (e.pointerType === 'mouse') Object.assign(ptr, { x: e.clientX, y: e.clientY, on: true }); }, { passive: true });
+  if (e.pointerType === 'mouse') Object.assign(ptr, { x: e.clientX, y: e.clientY, on: true, at: performance.now() }); }, { passive: true });
 document.addEventListener('pointerleave', () => { ptr.on = false; });
 addEventListener('blur', () => { ptr.on = false; });
 
@@ -198,7 +199,24 @@ function hush() {
 }
 audio.addEventListener('ended', hush);
 $('#hush').addEventListener('click', hush);
+speaking.addEventListener('click', hush);   // on a phone this bar sits over her feet: tapping it (or her) stops her
 $('#hear').addEventListener('click', () => say('talk'));
+// click her and she speaks; click her again and she stops (25 Sep, Dee). Only a click on her figure counts, not a
+// drag, and not the space beside her, where a drag still turns her memory. The cursor says which one you'll get
+const herHero = $('#her-hero'), herCanvas = $('#sprite-hero'), dragEl = $('#drag');
+const onHer = e => { const r = herCanvas.getBoundingClientRect();
+  return e.clientX > r.left + r.width * 0.25 && e.clientX < r.right - r.width * 0.25 && e.clientY > r.top && e.clientY < r.bottom; };
+let herDown = null, overHer = false;
+const herLabel = () => { dragEl.dataset.cursor = overHer ? (speakingNow ? 'stop' : 'talk to her') : 'drag her memory'; };
+herHero.addEventListener('pointerdown', e => { herDown = { x: e.clientX, y: e.clientY }; });
+herHero.addEventListener('click', e => {
+  if (!onHer(e) || (herDown && Math.hypot(e.clientX - herDown.x, e.clientY - herDown.y) > 8)) return;
+  if (speakingNow) hush(); else say('talk');
+  herLabel();
+});
+herHero.addEventListener('pointermove', e => { overHer = onHer(e); herLabel(); }, { passive: true });
+herHero.addEventListener('pointerleave', () => { overHer = false; herLabel(); });
+audio.addEventListener('ended', herLabel);
 $$('[data-voice]').forEach(b => b.addEventListener('click', () => say(b.dataset.voice)));
 
 // ─────────────────────────────────────────── the moments: each one plays once, and is kept
@@ -610,7 +628,7 @@ const mindLede = $('#mind-head .lede'), taken = new Set();
 const nodes = cards.map(() => { const n = document.createElement('i'); n.className = 'mind-node'; n.setAttribute('aria-hidden', 'true'); $('#mind-pin').append(n); return n; });
 let mindP = 0;
 const heroTalk = $('#hero-talk'), callLines = $$('.call-lines li'), waveBars = $$('.wave i'), callTime = $('#call-t');
-let callT = 0, heroTalking = false, talkSince = 0;
+let callT = 0;
 let last = performance.now();
 document.addEventListener('visibilitychange', () => { last = performance.now(); });
 function frame(now) {
@@ -673,17 +691,10 @@ function frame(now) {
     callLines.forEach(li => li.classList.toggle('is-on', hp >= +li.dataset.at));
     const onCount = callLines.filter(li => li.classList.contains('is-on')).length;
     callLines.forEach((li, i) => li.classList.toggle('old', i < onCount - 2));   // phones keep only the latest two
-    // she talks through the call beat. Hand-over stays smooth: she stops watching the cursor first (below),
-    // cuts into talking from her centre pose, and when it ends finishes her gesture on a calm frame.
-    // With sound on she also says her line once; it is this beat's own words.
-    // hysteresis: she starts talking a little after the call appears and stops a little before it goes, so a
-    // scroll that hovers at the edge cannot flick her between clips
-    if (!heroTalking && talkIn > 0.7 && hp < 0.97) { heroTalking = true; talkSince = t; }
-    else if (heroTalking && (talkIn < 0.08 || hp > 0.99) && t - talkSince > 1.5) heroTalking = false;   // once started, at least 1.5 s
-    const talking = heroTalking;
-    if (!speakingNow) heroHer.play(talking ? 'talk' : 'idle');
-    if (talking && soundOn && !spoken.has('talk')) say('talk');
-    if (talking) {
+    // 25 Sep, Dee: scrolling does not change what she does. The call's words still come in with the scroll, but
+    // she only talks when she really speaks: when you click her (or Hear her), until it ends or you click again
+    if (!speakingNow) heroHer.play('idle');
+    if (talkIn > 0.5) {
       callT += dt; callTime.textContent = `00:${String(Math.floor(callT) % 60).padStart(2, '0')}`;
       const last = callLines.filter(li => li.classList.contains('is-on')).pop(), herTurn = !last || last.classList.contains('c-her');
       waveBars.forEach((b, k) => b.style.setProperty('--h', (reduce ? 0.3 : 0.1 + (herTurn ? 0.9 : 0.3) * Math.abs(Math.sin(t * (herTurn ? 9 : 4) + k * 0.7) * Math.sin(t * 2.3 + k * 0.23))).toFixed(3)));
@@ -748,9 +759,12 @@ function frame(now) {
     const r = $('#sprite-hero').getBoundingClientRect(), fx = r.left + r.width / 2, fy = r.top + r.height * 0.12;
     // like the reel's slider: each screen edge is her full turn that way, however off-centre she stands
     const nx = (ptr.x - fx) / Math.max(80, ptr.x < fx ? fx : innerWidth - fx), ny = (ptr.y - fy) / Math.max(80, ptr.y < fy ? fy : innerHeight - fy);
-    heroHer.look(clamp(nx, -1, 1), clamp(ny, -1, 1), ptr.on && hp < 0.2);   // she watches you, then turns to face forward before the call starts
+    // she watches you while the mouse moves, wherever the page is scrolled; when it rests she relaxes back into
+    // her own breathing and blinking instead of holding a stare, and she faces forward while she speaks
+    const lookOn = ptr.on && performance.now() - ptr.at < LOOK_REST * 1000 && !speakingNow;
+    heroHer.look(clamp(nx, -1, 1), clamp(ny, -1, 1), lookOn);
     heroHer.update(dt);
-    if (her3d) her3d.update(dt, t, clamp(nx, -1, 1), clamp(ny, -1, 1), ptr.on && hp < 0.2 && !reduce);
+    if (her3d) her3d.update(dt, t, clamp(nx, -1, 1), clamp(ny, -1, 1), lookOn && !reduce);
   }
   const wr = walkSec.getBoundingClientRect();
   if (wr.top < innerHeight && wr.bottom > 0) {
