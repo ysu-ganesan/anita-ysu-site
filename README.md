@@ -90,7 +90,7 @@ On 25 Sep the page changed from the personal companion alone to everything the t
 5. **What runs today:** as before.
 6. **Two doors** (`#door`): "For you" is early access, which opens the panel. "For your company" is an email to the team.
 
-The nav is Work · Enterprise · Personal · Contact (Robots came out of it on 25 Sep, to keep it plain; the footer still links the robots section). Split headings keep a `<br>` as a forced line break (`splitLines` in `main.js`), so the hero always breaks after "One brain."
+The nav is Work · Enterprise · Personal · Contact (Robots came out of the nav and the footer on 25 Sep, to keep them plain). Split headings keep a `<br>` as a forced line break (`splitLines` in `main.js`), so the hero always breaks after "One brain."
 
 The shape comes from the vision board's ANITA Industrial page (`Dee-Nith/aneeta-vision`, `industrial.html`). The facts come from the team's own project folders. The copy only claims what those sources say:
 
