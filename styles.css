@@ -382,6 +382,57 @@ body.pre-real .her { opacity: 0; filter: brightness(2.4) saturate(0) drop-shadow
 .versus span { color: var(--dim); font-size: clamp(1rem, 1.6vw, 1.35rem); }
 .versus b { font-weight: 600; font-size: clamp(1.1rem, 2vw, 1.7rem); letter-spacing: -.01em; }
 
+/* ───────────── what we build (25 Sep): the vision board's ANITA Industrial door as glass cards, then the road it is on */
+.work { position: relative; padding: 16vh var(--pad) 14vh; }
+.work-head { max-width: 780px; }
+.work-head h2 { margin-top: .5em; }
+.work-grid { list-style: none; margin: 9vh 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.work-grid > li { display: flex; }
+.wc { position: relative; flex: 1; display: flex; flex-direction: column; padding: 24px 24px 22px; border-radius: 18px; overflow: hidden;
+  background: rgba(5,12,18,.6); border: 1px solid var(--line); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  transition: border-color .4s var(--ease-soft), transform .6s var(--ease-out), box-shadow .6s var(--ease-soft); }
+/* a soft light that follows the cursor inside the card (main.js sets --mx, --my) */
+.wc::before { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .4s var(--ease-soft);
+  background: radial-gradient(380px circle at var(--mx, 50%) var(--my, 0%), rgba(88,230,255,.11), transparent 65%); }
+.wc:hover { border-color: rgba(88,230,255,.45); transform: translateY(-4px); box-shadow: 0 24px 60px rgba(0,0,0,.55); }
+.wc:hover::before { opacity: 1; }
+.wc > * { position: relative; }
+.wc-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+.wc-icon { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; border: 1px solid var(--line); background: rgba(88,230,255,.06); color: var(--cyan); }
+.wc-icon svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.wc-icon img { width: 26px; height: 26px; filter: drop-shadow(0 0 8px rgba(88,230,255,.4)); }
+.wc-n { font-family: var(--font-display); font-weight: 500; font-size: .6rem; letter-spacing: .24em; color: var(--dim); }
+.wc-tag { font-family: var(--font-display); font-weight: 500; font-size: .56rem; letter-spacing: .22em; text-transform: uppercase; color: var(--cyan); }
+.wc h3 { margin: .7em 0 0; font-size: clamp(1.3rem, 1.8vw, 1.6rem); font-weight: 600; letter-spacing: -.015em; line-height: 1.15; }
+.wc h3 span { display: block; margin-top: .45em; font-family: var(--font-mono); font-weight: 400; font-size: .72rem; letter-spacing: .04em; color: var(--dim); }
+.wc p { margin: 1em 0 0; color: var(--dim); font-size: .9rem; line-height: 1.6; }
+.wc p.wc-ai { padding-top: 1em; border-top: 1px solid var(--hair); color: var(--ink); }
+.wc-ai b { display: block; margin-bottom: .5em; font-family: var(--font-display); font-weight: 500; font-size: .54rem; letter-spacing: .24em; text-transform: uppercase; color: var(--cyan); }
+.wc-ai b::before { content: ''; display: inline-block; width: 6px; height: 6px; margin-right: 8px; vertical-align: 1px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 8px var(--cyan); }
+.wc-ai.next b { color: var(--dim); }
+.wc-ai.next b::before { background: none; border: 1px solid var(--cyan); box-shadow: none; }
+.wc-stack { list-style: none; margin: auto 0 0; padding: 1.4em 0 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.wc-stack li { padding: 4px 9px; border-radius: 999px; border: 1px solid var(--hair); font-family: var(--font-mono); font-size: .66rem; color: #b9c6ca; }
+/* the last card is an invitation, not a product */
+.wc-you { background: rgba(88,230,255,.05); border-style: dashed; border-color: rgba(88,230,255,.35); }
+.wc-you h3 { font-size: clamp(1.6rem, 2.4vw, 2.1rem); }
+.wc-you p { margin-bottom: 1.6em; }
+.wc-you .btn.small { margin-top: auto; align-self: flex-start; }
+/* the road: four stages on one line, lit where work is under way */
+.road { margin-top: 12vh; }
+.road-steps { list-style: none; margin: 1.6em 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0 24px; counter-reset: step; }
+.road-steps li { position: relative; padding-top: 30px; counter-increment: step; text-shadow: 0 0 12px #000, 0 0 4px #000; }   /* the door's big graph rises behind it */
+.road-steps li::before { content: ''; position: absolute; left: 0; right: -24px; top: 5px; height: 1px; background: var(--line); }
+.road-steps li:last-child::before { right: 0; background: linear-gradient(90deg, var(--line), transparent); }
+.road-steps i { position: absolute; left: 0; top: 0; width: 11px; height: 11px; border-radius: 50%; border: 1px solid rgba(88,230,255,.5); background: var(--bg); }
+.road-steps li.on i { background: var(--cyan); border-color: var(--cyan); box-shadow: 0 0 14px var(--cyan); }
+.road-steps b { display: block; font-family: var(--font-display); font-weight: 500; font-size: .62rem; letter-spacing: .22em; text-transform: uppercase; }
+.road-steps b::before { content: counter(step, decimal-leading-zero) ' · '; color: var(--cyan); }
+.road-steps span { display: block; margin-top: .7em; color: var(--dim); font-size: .88rem; line-height: 1.55; }
+.road-steps em { display: block; margin-top: .8em; font-style: normal; font-family: var(--font-mono); font-size: .68rem; color: var(--cyan); }
+.road-steps li:not(.on) em { color: var(--dim); }
+@media (max-width: 1100px) { .work-grid { grid-template-columns: 1fr 1fr; } }
+
 /* ───────────── the door */
 .door { min-height: 90vh; display: grid; place-content: center; justify-items: center; text-align: center; padding: 16vh var(--pad); }
 .door h2 { font-size: clamp(2.2rem, 5.6vw, 5rem); max-width: 16ch; }
@@ -512,7 +563,10 @@ body.no-js-gate .gate { display: none; }
 /* ───────────── phones */
 @media (max-width: 800px) {
   .brand span { display: none; }
-  .pill a, .pill button { padding: 8px 9px; font-size: .52rem; letter-spacing: .1em; }
+  /* five links: tighter, and her emblem never gets squeezed out */
+  .brand { flex: none; }
+  .pill { gap: 0; padding: 3px; }
+  .pill a, .pill button { padding: 8px 5px; font-size: .52rem; letter-spacing: .04em; }
   .hero-copy { top: 13vh; transform: none; right: var(--pad); }
   .hero-copy .k { margin-bottom: 1em; }
   .note { display: none; }
@@ -537,6 +591,12 @@ body.no-js-gate .gate { display: none; }
   .fact-grid { grid-template-columns: 1fr 1fr; }
   .fact-grid li { border-right: 0; border-bottom: 1px solid var(--line); padding-left: 0 !important; }
   .versus li { grid-template-columns: 1fr; gap: 6px; }
+  .work-grid { grid-template-columns: 1fr; }
+  .road-steps { grid-template-columns: 1fr; gap: 26px; }
+  .road-steps li { padding: 0 0 0 28px; }
+  .road-steps li::before { left: 5px; right: auto; top: 16px; bottom: -26px; width: 1px; height: auto; }
+  .road-steps li:last-child::before { display: none; }
+  .road-steps i { top: 2px; }
   .foot-col, .foot-col.wide { grid-column: span 6; }
   .panel { inset: 6px; border-radius: 24px; }
   .panel-in { grid-template-columns: 1fr; gap: 36px; padding: 72px 22px 40px; }
@@ -545,8 +605,16 @@ body.no-js-gate .gate { display: none; }
   .speaking { top: auto; bottom: 84px; }
 }
 
+/* small phones: five links do not fit beside her emblem; Work steps out of the pill (the footer still has it) */
+@media (max-width: 374px) {
+  .pill a[href="#work"] { display: none; }
+}
+@media (max-width: 340px) {
+  .pill a, .pill button { padding: 8px 4px; letter-spacing: 0; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .grain, .chip-float, .cue::after, .eq i, .forget .dot { animation: none; }
-  .split .line-in, .reveal-fade, .chip, .field, .panel, .panel-her { transition: none; }
+  .split .line-in, .reveal-fade, .chip, .field, .panel, .panel-her, .wc { transition: none; }
 }

@@ -43,6 +43,18 @@ Her name, huge, behind her: glass ANITA letters (thin cyan edges, see-through, s
 
 The other designs tried that day are kept to compare: `/?hero=0` the hero before, `2` she forms from specks of her own pixels (`heroform.js`), `4` a day with her, `5` inside her memory then the pull-back, `6` her in a scene (a framed window onto ANITA HQ). Desktop only.
 
+## What we build (added 25 Sep)
+
+`#work`, between "What runs today" and the early-access door (nav: Work). It holds six glass cards: NEO ERP (BGR NEO), the ACC Sizing Suite (ENEXIO), BGRNEO WELD, robotic sugar de-bagging, ANITA herself, and a "Yours, next" card that opens an email to hello@aneeta.ai. Under the cards, the vision board's road: the office → the floor → the machines → humanoids, lit where work is under way. A soft light follows the cursor inside each card.
+
+The shape comes from the vision board's ANITA Industrial page (`Dee-Nith/aneeta-vision`, `industrial.html`). The facts come from the project folders on the Desktop (`neo-erp`, `Enexio_ACC_Software`, `welding-software`). The copy only claims what those sources say:
+
+- The welding card says **AI next**, not AI inside. Its seam finding is geometric, and camera inspection is a plan.
+- The sugar de-bagging card says no more than the vision board does, since there is no repo or document for it.
+- No client data, pricing or project names are used.
+
+Code: `.work` in `index.html` and `styles.css`, `.work` in `places` (`main.js`, where the memory graph sits: small and faint in the corner). On phones narrower than 375px, the nav drops its Work link; the footer still has one.
+
 ## ANITA in 3D (try it: http://127.0.0.1:8791/?3d)
 
 Dee's approved ANITA, exactly as drawn, standing in depth like a person. Without `?3d` the page is unchanged.

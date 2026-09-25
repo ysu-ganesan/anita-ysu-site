@@ -323,6 +323,12 @@ const countSeen = new IntersectionObserver(es => es.forEach(e => {
 }), { threshold: 0.6 });
 $$('[data-count]').forEach(el => countSeen.observe(el));
 
+// ─────────────────────────────────────────── what we build: a soft light follows the cursor inside each card
+$$('.wc').forEach(c => c.addEventListener('pointermove', e => {
+  const r = c.getBoundingClientRect();
+  c.style.setProperty('--mx', `${(e.clientX - r.left).toFixed(0)}px`); c.style.setProperty('--my', `${(e.clientY - r.top).toFixed(0)}px`);
+}, { passive: true }));
+
 // ─────────────────────────────────────────── early access: pill → panel (why.zero.university)
 const pill = $('#joinpill'), jpForm = $('#jp-form'), jpEmail = $('#jp-email');
 const panel = $('#panel'), form = $('#signup'), sayEl = $('#say'), submit = $('#submit');
@@ -515,6 +521,8 @@ const places = [
   // in the demo's city: into HQ's brain core (above). On the drawn road (no 3D) the sphere is home on the horizon
   ['.walk',    () => city ? (cityCore && graph.on ? intoCore() : { x: 0.5, y: 0.3, r: 0.1, alpha: 0 }) : { x: 0.5, y: 0.42 - 0.07 - walkP * 0.05, r: 0.05 + walkP * 0.1, alpha: 0.95 }],
   ['.facts',   () => ({ x: 0.85, y: 0.3, r: 0.3, alpha: 0.3 })],
+  // what we build: small and faint, up in the corner, so the cards stay easy to read
+  ['.work',    () => narrow() ? { x: 0.5, y: 0.14, r: 0.2, alpha: 0.12 } : { x: 0.88, y: 0.2, r: 0.22, alpha: 0.2 }],
   ['.door',    () => ({ x: 0.5, y: 0.5, r: 0.46, alpha: 0.55 })],
   ['.foot',    () => ({ x: 0.5, y: 0.9, r: 0.5, alpha: 0.22 })],
 ].map(([s, f]) => [$(s), f]);
