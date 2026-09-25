@@ -518,6 +518,7 @@ const places = [
                 : { x: 0.68, y: 0.52, r: 0.38, alpha: 1 }],
   // the work and Enterprise: small and faint, up in the corner, so the cards stay easy to read
   ['.work',       () => narrow() ? { x: 0.5, y: 0.14, r: 0.2, alpha: 0.12 } : { x: 0.88, y: 0.2, r: 0.22, alpha: 0.2 }],
+  ['.office',     () => narrow() ? { x: 0.5, y: 0.14, r: 0.2, alpha: 0.12 } : { x: 0.88, y: 0.2, r: 0.22, alpha: 0.2 }],   // R&D: the Virtual Office
   ['.industrial', () => narrow() ? { x: 0.5, y: 0.14, r: 0.2, alpha: 0.12 } : { x: 0.86, y: 0.26, r: 0.24, alpha: 0.22 }],
   // Personal: her memory comes back to the middle, where the vow picks it up
   ['.chapter',    () => ({ x: 0.5, y: 0.5, r: narrow() ? 0.4 : 0.46, alpha: 0.3 })],

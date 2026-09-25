@@ -70,6 +70,25 @@ The shape comes from the vision board's ANITA Industrial page (`Dee-Nith/aneeta-
 
 Where the memory graph sits (`places` in `main.js`): it steps aside, small and faint in the corner, for the work and Enterprise. It comes back to the middle for Personal, where the vow picks it up.
 
+## R&D: the Virtual Office (`#rnd`, added 25 Sep)
+
+The section comes right after the Work cards; the R&D card's "See the office ↓" leads to it. The copy is from J's *Virtual Office — Website Copy* (25 Sep, written for Vaishnavi):
+
+- **Headline:** "We're a team of three. Our office has twelve."
+- **We are our first customer:** how every project moves through the office. Reception → a yes or no from the AI CEO → an owner → delivered, drawn with the road's line and nodes.
+- **The team:** nine agents as desks. GROW's desk is dark, because no growth system is connected yet.
+- **How the office works:** eight points (the AI CEO, reports and coaching, the morning briefing, Confucius the memory, the night shift, one memory per project, the office's own GPU, honest by design).
+- **Close:** "We built our company this way first. Let's build yours.", with a Book a walk-through email button.
+
+J's pre-launch checks are kept:
+
+- No LoCoMo numbers.
+- No expert names (the idea stays, the names go).
+- Nothing that isn't built yet: the daily team meeting, agents talking to each other directly, a shared team memory, a live score wall.
+- None of the words secure, private, seamless, powerful, revolutionary.
+
+**Dee approves all public wording, so this section needs Dee's sign-off before it goes live.** The three people aren't named yet. J's copy leaves that to Vaishnavi.
+
 ## ANITA in 3D (try it: http://127.0.0.1:8791/?3d)
 
 Dee's approved ANITA, exactly as drawn, standing in depth like a person. Without `?3d` the page is unchanged.
