@@ -21,9 +21,10 @@
 // column n % cols, row (n % perPage) / cols.
 
 const BLEND = 0.18;       // seconds of dissolve when she changes clip (0 = J's hard cut, everywhere)
-const BLEND_SOFT = 0.3;   // into and out of talking (her arms are mid-gesture for most of it), and turning to look
-                          // from a pose that does not match
-const LOOK_WAIT = 0.6;    // seconds she may wait for an idle frame she can turn from; after that she turns anyway
+const BLEND_SOFT = 0.3;   // into and out of talking (her arms are mid-gesture for most of it)
+const RUSH = 3;           // when someone appears mid-sway, her resting motion plays this much faster (forward or back)
+                          // into the nearest pose she can turn from, like someone noticing you, then she turns
+const DECODE_AHEAD = 2.5; // seconds of talking decoded ahead of her (a sheet page lasts 2.75 s and takes ~0.3 s to decode)
 const LEAN_EASE = 1.0;    // seconds to come back upright after a clip change (see _switch)
 
 export class Anita {
@@ -42,7 +43,7 @@ export class Anita {
       const pages = await Promise.all(meta.files.map(f => new Promise((res, rej) => {
         const im = new Image(); im.decoding = 'async'; im.onload = () => res(im); im.onerror = rej; im.src = this.base + f;
       })));
-      Object.assign(clip, { meta, pages, exits: meta.exits && meta.exits.length ? meta.exits : [0] });
+      Object.assign(clip, { meta, pages, exits: meta.exits && meta.exits.length ? meta.exits : [0], bm: {}, pb: {}, fbm: {} });
       return clip;
     })();
     return clip.ready;
@@ -97,6 +98,7 @@ export class Anita {
   update(dt) {
     const idle = this.clips.idle;
     if (!idle || !idle.meta) return;
+    this._decodeAhead(dt);
     if (this.fade && (this.fade.k -= dt / this.fade.secs) <= 0) this.fade = null;
     if (this.leanT < LEAN_EASE) {
       this.leanT = Math.min(LEAN_EASE, this.leanT + dt); const u = this.leanT / LEAN_EASE;
@@ -106,16 +108,14 @@ export class Anita {
     const g = this.clips.gaze;
     if (g && g.meta) {
       if (this.cur === g) return this._gazeUpdate(dt);
-      // someone is here: she turns to them, cutting in on the gaze clip's centre frame, from an idle frame that
-      // already has that pose (so it does not snap)
+      // someone is here: she turns to them, cutting in on the gaze clip's centre frame, only from an idle frame that
+      // already has that pose and lean (so nothing snaps or slides). Mid-sway, she first settles into the nearest such
+      // frame quickly (this.rush, played below), the way a person straightens up when they notice you
+      this.rush = 0;
       if (this.cur === idle && this.want === 'idle' && this.gazeOn && this.stopAt === null && !this.fade) {
-        this.lookWait = (this.lookWait || 0) + dt;
-        const ready = this._canLook(idle);
-        if (ready || this.lookWait > LOOK_WAIT) {
-          this._switch(g, this._centre(g), ready ? BLEND : BLEND_SOFT); this.lookWait = 0;
-          return this._gazeUpdate(dt);
-        }
-      } else this.lookWait = 0;
+        if (this._canLook(idle)) { this._switch(g, this._centre(g), BLEND); return this._gazeUpdate(dt); }
+        this.rush = this._toLook(idle);
+      }
     }
 
     const wanted = this.clips[this.want];
@@ -127,9 +127,14 @@ export class Anita {
     if (!canCut && this.want === this.cur.name) this.stopAt = null;
 
     const c = this.cur, [a, b] = this._range(c), before = this.t;
-    this.t += dt * c.meta.fps * this.speed;
-    if (this.t > b) {                                                           // the loop's seam, dissolved
-      const over = this.t - b, stop = this.stopAt; this.t = b; this._switch(c, a + over, BLEND); this.stopAt = stop;
+    if (this.rush && c === idle) {                                              // settling to turn (see above)
+      this.t += Math.sign(this.rush) * Math.min(Math.abs(this.rush), dt * c.meta.fps * RUSH);
+      if (this.t > b) this.t -= b - a + 1; else if (this.t < a) this.t += b - a + 1;
+    } else {
+      this.t += dt * c.meta.fps * this.speed;
+      if (this.t > b) {                                                         // the loop's seam, dissolved
+        const over = this.t - b, stop = this.stopAt; this.t = b; this._switch(c, a + over, BLEND); this.stopAt = stop;
+      }
     }
     if (this.stopAt !== null) {
       const passed = before <= this.stopAt ? this.t >= this.stopAt || this.t < before : this.t >= this.stopAt && this.t < before;
@@ -170,6 +175,79 @@ export class Anita {
   // may she turn to look from the idle frame she is on?
   _canLook(idle) { const f = Math.round(this.t), r = idle.meta.lookFrom; return !r || r.some(([a, b]) => f >= a && f <= b); }
 
+  // ── decoded copies of her sheets (25 Sep). A sheet page is 4950×4800 (~95 MB decoded); the browser drops pages it has
+  // not drawn for a while and decodes them again on the next draw, which froze her for ~0.3 s whenever she turned to
+  // the cursor after resting, started talking, or reached a new page while talking. These copies are decoded off the
+  // main thread (createImageBitmap from the file) and kept, so drawing never waits.
+
+  // keep frames from..to of a clip decoded for good (her look: only the sweep frames are ever drawn)
+  async keepFrames(name, from, to) {
+    const c = this.clips[name]; if (!c || typeof createImageBitmap !== 'function') return;
+    await c.ready; const m = c.meta;
+    for (let p = Math.floor(from / m.perPage); p <= Math.floor(to / m.perPage); p++) {
+      try {
+        const pb = await createImageBitmap(await (await fetch(this.base + m.files[p])).blob());
+        for (let f = Math.max(from, p * m.perPage); f <= Math.min(to, (p + 1) * m.perPage - 1); f++) {
+          const k = f % m.perPage;
+          c.fbm[f] = await createImageBitmap(pb, (k % m.cols) * m.fw, Math.floor(k / m.cols) * m.fh, m.fw, m.fh);
+        }
+        pb.close();
+      } catch (e) { /* the sheet image stays the source */ }
+    }
+  }
+
+  // start decoding page p of a clip (if it is not already), into single-frame copies (small, so the first draw of each
+  // is quick too); the sheet image is drawn until they are ready
+  warm(name, p) { const c = this.clips[name]; if (c && c.meta) this._bmPage(c, p); }
+  _bmPage(c, p) {
+    if (c.bm[p] || typeof createImageBitmap !== 'function') return;
+    c.bm[p] = 'pending';
+    (async () => {
+      try {
+        const m = c.meta, pb = await createImageBitmap(await (await fetch(this.base + m.files[p])).blob());
+        if (c.bm[p] !== 'pending') { pb.close(); return; }                  // released while decoding
+        c.pb[p] = pb;                                                          // usable at once, while the frames are cut
+        const fs = []; for (let f = p * m.perPage; f < Math.min(m.frames, (p + 1) * m.perPage); f++) fs.push(f);
+        const got = await Promise.all(fs.map(f => { const k = f % m.perPage;
+          return createImageBitmap(pb, (k % m.cols) * m.fw, Math.floor(k / m.cols) * m.fh, m.fw, m.fh); }));
+        if (c.bm[p] !== 'pending') { got.forEach(bm => bm.close()); return; }
+        fs.forEach((f, i) => { c.fbm[f] = got[i]; });
+        c.bm[p] = 'ready'; delete c.pb[p]; pb.close();
+      } catch (e) { delete c.bm[p]; if (c.pb[p]) { c.pb[p].close(); delete c.pb[p]; } }
+    })();
+  }
+  _dropPages(c, keep) {
+    const m = c.meta;
+    for (const key of Object.keys(c.bm)) {
+      const p = +key; if (keep.includes(p)) continue;
+      if (c.bm[p] === 'ready') for (let f = p * m.perPage; f < Math.min(m.frames, (p + 1) * m.perPage); f++) if (c.fbm[f]) { c.fbm[f].close(); delete c.fbm[f]; }
+      if (c.pb[p]) { c.pb[p].close(); delete c.pb[p]; }
+      delete c.bm[p];
+    }
+  }
+  // talking: the page she is on and the page coming up are decoded; pages she has left are released. Her first talk
+  // page stays, so the next time she talks it starts without a wait
+  _decodeAhead(dt) {
+    const talk = this.clips.talk; if (!talk || !talk.meta) return;
+    const per = talk.meta.perPage;
+    if (this.cur === talk) {
+      const [a, b] = this._range(talk), here = Math.floor(this.t / per);
+      let ahead = this.t + DECODE_AHEAD * talk.meta.fps; if (ahead > b) ahead = a + (ahead - b);
+      const next = Math.floor(ahead / per);
+      this._bmPage(talk, here); this._bmPage(talk, next); this._dropPages(talk, [0, here, next]);
+      this.talkRest = 0;
+    } else if ((this.talkRest = (this.talkRest || 0) + dt) > 3) this._dropPages(talk, [0]);
+  }
+
+  // frames to the nearest idle frame she can turn from: + ahead, - back (the idle clip loops)
+  _toLook(idle) {
+    const r = idle.meta.lookFrom; if (!r) return 0;
+    const [a, b] = this._range(idle), n = b - a + 1, f = this.t;
+    let ahead = Infinity, back = Infinity;
+    for (const [s, e] of r) { ahead = Math.min(ahead, ((s - f) % n + n) % n); back = Math.min(back, ((f - e) % n + n) % n); }
+    return ahead <= back ? ahead : -back;
+  }
+
   // where to cut away: the frame nearest her resting pose within the next two seconds (J's rule: finish the
   // motion, then cut). `pose` is each frame's distance from the idle master pose, measured from the sheets;
   // without it, the next marked exit frame.
@@ -205,8 +283,9 @@ export class Anita {
   _frame(c, t, W, H) {
     const { meta, pages } = c, g = this.ctx;
     const n = Math.min(meta.frames - 1, Math.max(0, Math.round(t)));
-    const page = pages[Math.floor(n / meta.perPage)], k = n % meta.perPage;
-    const sx = (k % meta.cols) * meta.fw, sy = Math.floor(k / meta.cols) * meta.fh;
+    const pi = Math.floor(n / meta.perPage), k = n % meta.perPage, kept = c.fbm && c.fbm[n];
+    const page = kept || (c.pb && c.pb[pi]) || pages[pi];   // a decoded copy if there is one (see keepFrames, _bmPage)
+    const sx = kept ? 0 : (k % meta.cols) * meta.fw, sy = kept ? 0 : Math.floor(k / meta.cols) * meta.fh;
     // fit by height, feet on the bottom edge, centred, then moved and scaled by the clip's alignment
     const place = al => { const h = H * (al.scale ?? 1), w = h * meta.fw / meta.fh;
       return { w, h, x: (W - w) / 2 + (al.dx || 0) / meta.fw * w, y: H - h - (al.dy || 0) / meta.fh * h }; };

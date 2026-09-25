@@ -160,8 +160,10 @@ function enter(withSound) {
     $('.chips').classList.add('is-in');
     $('#joinpill').classList.add('is-shown');
   }, HERO === 2 ? 2700 : 250);
-  heroHer.load('talk');   // her talking clip, fetched once she has been met
-  if (!reduce) heroHer.load('gaze');   // and J's gaze clip, so she can look at you
+  heroHer.load('talk').then(() => heroHer.warm('talk', 0));   // her talking clip, fetched once she has been met; its first
+                                                              // page decoded ahead, so a click starts her without a wait
+  // and J's gaze clip, so she can look at you: on a device with a mouse, its sweep frames are kept decoded (sprite.js)
+  if (!reduce) heroHer.load('gaze').then(g => { if (matchMedia('(hover: hover)').matches && g.meta.sweep) heroHer.keepFrames('gaze', g.meta.sweep[0], g.meta.sweep[1]); });
   if (withSound) setTimeout(() => { if (!spoken.has('talk')) say('talk'); }, 1300);
 }
 $('#enter-sound').addEventListener('click', () => enter(true));
