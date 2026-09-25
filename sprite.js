@@ -15,6 +15,12 @@
 //      0.18 s dissolve from the frame she was on (0.3 s into and out of talking) (BLEND below; 0 gives J's hard cut back), because hard cuts between
 //      these renders read as glitches. And she only turns to look at you from idle frames whose pose already matches
 //      the gaze clip's centre (idle.json `lookFrom`, measured), so her head never snaps.
+//   6. Later on 25 Sep ("still a glitch when the cursor comes back"): J rendered the gaze take with her arms hanging
+//      closer to her body than in the idle loop, so every turn to look showed two pairs of arms for a moment. The look
+//      frames now carry her resting arms (idle frame 45's, put in when the sheets are made) and are laid out in the
+//      idle clip's space, so they draw like it. A switch also lines up her face's height (`rise`, measured per frame,
+//      eased away like the lean), both frames of a dissolve fade (the new one no longer pops in at full strength),
+//      and she settles into a pose she can turn from with an eased motion, not a sudden 3× jump.
 //
 // The sheets here are J's, re-packed at 450×800 a frame (the originals are 720×1280 and
 // decode to ~240 MB a page). Same json format: frame n lives on files[n / perPage],
@@ -22,8 +28,8 @@
 
 const BLEND = 0.18;       // seconds of dissolve when she changes clip (0 = J's hard cut, everywhere)
 const BLEND_SOFT = 0.3;   // into and out of talking (her arms are mid-gesture for most of it)
-const RUSH = 3;           // when someone appears mid-sway, her resting motion plays this much faster (forward or back)
-                          // into the nearest pose she can turn from, like someone noticing you, then she turns
+const RUSH = 4;           // when someone appears mid-sway, her resting motion eases (forward or back, at up to this many
+                          // times its speed) into the nearest pose she can turn from, like someone noticing you, then she turns
 const DECODE_AHEAD = 2.5; // seconds of talking decoded ahead of her (a sheet page lasts 2.75 s and takes ~0.3 s to decode)
 const LEAN_EASE = 1.0;    // seconds to come back upright after a clip change (see _switch)
 
@@ -32,7 +38,7 @@ export class Anita {
     this.canvas = canvas; this.ctx = canvas.getContext('2d'); this.base = base;
     this.clips = {}; this.cur = null; this.want = 'idle'; this.t = 0; this.stopAt = null;
     this.speed = 1; this.ready = false;
-    this.lean = 0; this.leanFrom = 0; this.leanT = LEAN_EASE;
+    this.lean = 0; this.leanFrom = 0; this.leanT = LEAN_EASE; this.rise = 0; this.riseFrom = 0;
   }
 
   async load(name) {
@@ -80,17 +86,19 @@ export class Anita {
     const g = this.clips.gaze, idle = this.clips.idle;
     const stay = this.gazeOn && this.want === 'idle';
     const target = this._gazeTarget(g, !stay);
-    // the nod: down up to 9 px, up up to 6 px (frame pixels), eased so it never snaps; back to level when leaving
-    const want = stay ? (this.gy > 0 ? this.gy * 9 : this.gy * 6) : 0;
+    // the nod: down up to 9.3 px, up up to 6.2 px (frame pixels), eased so it never snaps; back to level when leaving
+    const want = stay ? (this.gy > 0 ? this.gy * 9.3 : this.gy * 6.2) : 0;
     this.tiltNow = (this.tiltNow || 0) + (want - (this.tiltNow || 0)) * Math.min(1, dt * 6);
     // scrubbing, eased like the reel: quick to follow, never snapping. Not during the dissolve in: she holds the
     // pose it started from, so the two frames being blended match and nothing doubles
     if (!this.fade) this.t += (target - this.t) * Math.min(1, dt * 9);
-    // home again and nobody to look at: cut back (centre frame ≈ master pose)
+    // home again and nobody to look at: cut back (centre frame ≈ master pose). Back to resting on the idle frame whose
+    // arms her look frames carry (idle.json `fromLook`), so only her head changes in the dissolve
     if (!stay && Math.abs(target - this.t) < 0.6 && Math.abs(this.tiltNow) < 0.3) {
       const next = this.clips[this.want];
       const to = next && next.meta && this.want !== 'gaze' ? next : idle;
-      this._cutTo(to, to.name === 'talk' ? BLEND_SOFT : BLEND);
+      const at = to === idle && idle.meta.fromLook != null ? idle.meta.fromLook : this._range(to)[0];
+      this._switch(to, at, to.name === 'talk' ? BLEND_SOFT : BLEND);
     }
     this.draw();
   }
@@ -101,8 +109,8 @@ export class Anita {
     this._decodeAhead(dt);
     if (this.fade && (this.fade.k -= dt / this.fade.secs) <= 0) this.fade = null;
     if (this.leanT < LEAN_EASE) {
-      this.leanT = Math.min(LEAN_EASE, this.leanT + dt); const u = this.leanT / LEAN_EASE;
-      this.lean = this.leanFrom * (1 - u * u * (3 - 2 * u));                 // eased at both ends: no jerk
+      this.leanT = Math.min(LEAN_EASE, this.leanT + dt); const u = this.leanT / LEAN_EASE, e = 1 - u * u * (3 - 2 * u);
+      this.lean = this.leanFrom * e; this.rise = this.riseFrom * e;           // eased at both ends: no jerk
     }
     if (!this.cur) { this.cur = idle; this.t = this._range(idle)[0]; }
     const g = this.clips.gaze;
@@ -110,11 +118,12 @@ export class Anita {
       if (this.cur === g) return this._gazeUpdate(dt);
       // someone is here: she turns to them, cutting in on the gaze clip's centre frame, only from an idle frame that
       // already has that pose and lean (so nothing snaps or slides). Mid-sway, she first settles into the nearest such
-      // frame quickly (this.rush, played below), the way a person straightens up when they notice you
-      this.rush = 0;
-      if (this.cur === idle && this.want === 'idle' && this.gazeOn && this.stopAt === null && !this.fade) {
+      // frame quickly (this.settle, played below), the way a person straightens up when they notice you
+      if (this.cur === idle && this.want === 'idle' && this.gazeOn && this.stopAt === null && !this.fade && !this.settle) {
         if (this._canLook(idle)) { this._switch(g, this._centre(g), BLEND); return this._gazeUpdate(dt); }
-        this.rush = this._toLook(idle);
+        const d = this._toLook(idle), fps = idle.meta.fps;
+        // eased from the speed she is moving at to a stop on that frame (a cubic), at up to RUSH times her speed
+        if (d) this.settle = { from: this.t, d, e: 0, v: fps * this.speed, T: Math.max(0.15, 1.5 * Math.abs(d) / (RUSH * fps)) };
       }
     }
 
@@ -127,9 +136,13 @@ export class Anita {
     if (!canCut && this.want === this.cur.name) this.stopAt = null;
 
     const c = this.cur, [a, b] = this._range(c), before = this.t;
-    if (this.rush && c === idle) {                                              // settling to turn (see above)
-      this.t += Math.sign(this.rush) * Math.min(Math.abs(this.rush), dt * c.meta.fps * RUSH);
-      if (this.t > b) this.t -= b - a + 1; else if (this.t < a) this.t += b - a + 1;
+    this.rush = 0;
+    if (this.settle && c === idle) {                                            // settling to turn (see above)
+      const s = this.settle, n = b - a + 1; s.e = Math.min(s.T, s.e + dt);
+      const u = s.e / s.T, p = (u * u * u - 2 * u * u + u) * s.v * s.T + (3 - 2 * u) * u * u * s.d;
+      this.t = a + (((s.from + p - a) % n) + n) % n;
+      this.rush = s.d - p;                                                      // (frames still to go, for the debug view)
+      if (s.e >= s.T) { this.t = a + (((s.from + s.d - a) % n) + n) % n; this.settle = null; }
     } else {
       this.t += dt * c.meta.fps * this.speed;
       if (this.t > b) {                                                         // the loop's seam, dissolved
@@ -149,24 +162,32 @@ export class Anita {
   // the other clips stand upright, so a change mid-sway put two of her side by side in the dissolve. The new clip
   // is leaned from the feet so her upper body stays exactly where it was (each clip's `lean`, measured per frame),
   // then she comes back upright over LEAN_EASE. The frame fading out leans with her (dLean)
+  // Her face is lined up the same way (each clip's `rise`: how much lower her face is than in idle frame 0, measured
+  // per frame; her whole body bobs a few pixels in the idle loop): the new clip is stretched a hair from the feet so
+  // her face lands where it was, and eases back with the lean
   _switch(clip, t, secs = BLEND) {
-    const old = this.cur, n = Math.round(this.t), L0 = this.lean;
+    const old = this.cur, n = Math.round(this.t), L0 = this.lean, R0 = this.rise;
     this._blendFrom(secs, n);
-    this.cur = clip; this.t = t; this.stopAt = null;
+    this.cur = clip; this.t = t; this.stopAt = null; this.settle = null;
     if (old && old.meta) {
-      const L1 = L0 + this._leanOf(old, n) - this._leanOf(clip, t);
-      if (this.fade) this.fade.dLean = (this.fade.dLean || 0) + L0 - L1;   // the fading frame stays where it was
-      this.lean = this.leanFrom = L1; this.leanT = 0;
+      const L1 = L0 + this._of(old, 'lean', n) - this._of(clip, 'lean', t);
+      const R1 = R0 + this._of(old, 'rise', n) - this._of(clip, 'rise', t);
+      if (this.fade) {                                                      // the fading frame stays where it was
+        this.fade.dLean = (this.fade.dLean || 0) + L0 - L1; this.fade.dRise = (this.fade.dRise || 0) + R0 - R1;
+      }
+      this.lean = this.leanFrom = L1; this.rise = this.riseFrom = R1; this.leanT = 0;
     }
   }
 
-  _leanOf(c, t) { const a = c.meta.lean; return a ? a[Math.min(a.length - 1, Math.max(0, Math.round(t)))] : 0; }
+  // a clip's measured value (lean, rise) at frame t
+  _of(c, key, t) { const a = c.meta[key]; return a ? a[Math.min(a.length - 1, Math.max(0, Math.round(t)))] : 0; }
 
-  // lean the drawing from her feet: L frame pixels at head height, none at the feet (canvas bottom)
-  _lean(g, L, H) { const k = -L / 760; g.setTransform(1, 0, k, 1, -k * H, 0); }
+  // lean the drawing from her feet (L frame pixels at head height, none at the feet, the canvas bottom), and lower it
+  // by R frame pixels at her face (row ≈ 110 of 800), stretched from the feet
+  _pose(g, L, R, H) { const k = -L / 760, s = 1 - R / 690; g.setTransform(1, 0, k, s, -k * H, H * (1 - s)); }
 
-  // the frame she is leaving fades out over the new one. If a change is still mostly showing its old frame, that
-  // one keeps fading (starting again would make it jump back in)
+  // the frame she is leaving fades out as the new one fades in (see draw). If a change is still mostly showing its old
+  // frame, that one keeps fading (starting again would make it jump back in)
   _blendFrom(secs = BLEND, n = Math.round(this.t)) {
     if (!BLEND || !this.cur || !this.cur.meta || (this.fade && this.fade.k > 0.5)) return;
     this.fade = { clip: this.cur, n, k: 1, secs };
@@ -239,13 +260,13 @@ export class Anita {
     } else if ((this.talkRest = (this.talkRest || 0) + dt) > 3) this._dropPages(talk, [0]);
   }
 
-  // frames to the nearest idle frame she can turn from: + ahead, - back (the idle clip loops)
+  // frames to the nearest idle frame she can turn from: + ahead, - back. Never across the loop's seam (117 → 0): that
+  // cut is only hidden when it is dissolved, and a settle does not dissolve
   _toLook(idle) {
     const r = idle.meta.lookFrom; if (!r) return 0;
-    const [a, b] = this._range(idle), n = b - a + 1, f = this.t;
-    let ahead = Infinity, back = Infinity;
-    for (const [s, e] of r) { ahead = Math.min(ahead, ((s - f) % n + n) % n); back = Math.min(back, ((f - e) % n + n) % n); }
-    return ahead <= back ? ahead : -back;
+    const f = this.t; let ahead = Infinity, back = Infinity;
+    for (const [s, e] of r) { if (s >= f) ahead = Math.min(ahead, s - f); if (e <= f) back = Math.min(back, f - e); }
+    return ahead <= back ? ahead : back < Infinity ? -back : 0;
   }
 
   // where to cut away: the frame nearest her resting pose within the next two seconds (J's rule: finish the
@@ -262,26 +283,42 @@ export class Anita {
     return best ?? (Math.floor(this.t) + 1 > b ? a : Math.floor(this.t) + 1);
   }
 
+  // During a dissolve both frames are drawn at their share and added (old × k + new × (1 − k)): where they match
+  // nothing changes, and what only one of them has fades in or out. (Before 25 Sep the new frame was drawn at full
+  // strength with the old one fading over it, so anything only the new frame had popped in at once.)
   draw() {
     const c = this.cur; if (!c) return;
-    const { meta } = c, cv = this.canvas, g = this.ctx;
+    const { meta } = c, cv = this.canvas, g = this.ctx, fd = this.fade;
     const dpr = Math.min(devicePixelRatio || 1, 2);
     const W = Math.round(cv.clientWidth * dpr), H = Math.round(cv.clientHeight * dpr);
     if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
     g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, W, H);
-    this._lean(g, this.lean, H);
-    const f = this._frame(c, this.t, W, H);
-    if (c.name === 'gaze' && Math.abs(this.tiltNow || 0) > 0.15) this._tilt(f.page, f.sx, f.sy, f.dx0, f.dy0, f.w / meta.fw);
-    if (this.fade) {
-      this._lean(g, this.lean + (this.fade.dLean || 0), H);
-      g.globalAlpha = this.fade.k; this._frame(this.fade.clip, this.fade.n, W, H); g.globalAlpha = 1;
+    const to = fd ? this._layer(W, H) : g;
+    this._pose(to, this.lean, this.rise, H);
+    const f = this._frame(c, this.t, W, H, to);
+    if (c.name === 'gaze' && Math.abs(this.tiltNow || 0) > 0.15) this._tilt(f.page, f.sx, f.sy, f.dx0, f.dy0, f.w / meta.fw, to);
+    if (fd) {
+      g.globalAlpha = 1 - fd.k; g.drawImage(to.canvas, 0, 0);
+      to.setTransform(1, 0, 0, 1, 0, 0); to.clearRect(0, 0, W, H);
+      this._pose(to, this.lean + (fd.dLean || 0), this.rise + (fd.dRise || 0), H);
+      this._frame(fd.clip, fd.n, W, H, to);
+      g.globalCompositeOperation = 'lighter'; g.globalAlpha = fd.k; g.drawImage(to.canvas, 0, 0);
+      g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1;
     }
     g.setTransform(1, 0, 0, 1, 0, 0);
     this.ready = true;
   }
 
-  _frame(c, t, W, H) {
-    const { meta, pages } = c, g = this.ctx;
+  // a cleared offscreen canvas the size of hers, to draw one frame of a dissolve on
+  _layer(W, H) {
+    const l = this._lay || (this._lay = document.createElement('canvas').getContext('2d'));
+    if (l.canvas.width !== W || l.canvas.height !== H) { l.canvas.width = W; l.canvas.height = H; }
+    l.setTransform(1, 0, 0, 1, 0, 0); l.clearRect(0, 0, W, H);
+    return l;
+  }
+
+  _frame(c, t, W, H, g = this.ctx) {
+    const { meta, pages } = c;
     const n = Math.min(meta.frames - 1, Math.max(0, Math.round(t)));
     const pi = Math.floor(n / meta.perPage), k = n % meta.perPage, kept = c.fbm && c.fbm[n];
     const page = kept || (c.pb && c.pb[pi]) || pages[pi];   // a decoded copy if there is one (see keepFrames, _bmPage)
@@ -294,10 +331,11 @@ export class Anita {
       g.drawImage(page, sx, sy, meta.fw, meta.fh, body.x, body.y, body.w, body.h);
       return { page, sx, sy, dx0: body.x, dy0: body.y, w: body.w };
     }
-    // The gaze and talk renders have other proportions than the idle loop (a bigger head for its body), so one
-    // alignment cannot match both her head and her feet, and a clip change made her head jump. Drawn in 8 px strips
-    // instead: the head placed by alignHead, the legs by align, blending between them down the torso (headTo rows).
-    // Strip edges land on whole pixels, so there are no seams, even while a clip change fades (25 Sep)
+    // The talk render has other proportions than the idle loop (a bigger head for its body), so one alignment cannot
+    // match both her head and her feet, and a clip change made her head jump. Drawn in 8 px strips instead: the head
+    // placed by alignHead, the legs by align, blending between them down the torso (headTo rows). Strip edges land on
+    // whole pixels, so there are no seams, even while a clip change fades (25 Sep). (The gaze render had the same
+    // problem; its frames are now laid out this way when the sheets are made, so they draw like the idle loop.)
     const head = place(meta.alignHead), [r0, r1] = meta.headTo, STEP = 8;
     const at = y => { const u = Math.min(1, Math.max(0, (y - r0) / (r1 - r0))), m = u * u * (3 - 2 * u);
       return { x: head.x + (body.x - head.x) * m, w: head.w + (body.w - head.w) * m,
@@ -312,9 +350,10 @@ export class Anita {
   // Up and down. J's gaze clip turns left and right, and only looks down while turned to her right, so the
   // vertical is added here: her face is moved down (or up) inside her head, most at eye level and not at
   // all at the crown or the chin, like a small nod. Drawn in thin strips from the frame itself; nothing is
-  // painted on. Band measured on the 450×800 gaze frames: crown ≈ 50, eyes ≈ 120, chin ≈ 168, x 150–305.
-  _tilt(page, sx, sy, dx0, dy0, k) {
-    const g = this.ctx, A = this.tiltNow, X0 = 150, X1 = 305, Y0 = 48, EYE = 120, Y1 = 172;
+  // painted on. Band on the 450×800 look frames (in the idle clip's space since 25 Sep): crown ≈ 27, eyes ≈ 99,
+  // chin ≈ 149, x 138–299.
+  _tilt(page, sx, sy, dx0, dy0, k, g = this.ctx) {
+    const A = this.tiltNow, X0 = 138, X1 = 299, Y0 = 24, EYE = 99, Y1 = 153;
     const bump = y => Math.sin(Math.PI * (y < EYE ? 0.5 * (y - Y0) / (EYE - Y0) : 0.5 + 0.5 * (y - EYE) / (Y1 - EYE)));
     g.clearRect(dx0 + X0 * k, dy0 + Y0 * k, (X1 - X0) * k, (Y1 - Y0) * k);
     for (let y = Y0; y < Y1; y += 2) {
