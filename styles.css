@@ -559,8 +559,6 @@ body.pre-real .her { opacity: 0; filter: brightness(2.4) saturate(0) drop-shadow
 .panel-left .k { margin: 0 0 1.4em; }
 .panel-left h2 { font-size: clamp(2.4rem, 4vw, 3.6rem); max-width: 11ch; }
 .panel-left h2 em { text-shadow: none; }   /* each line is masked while it slides in, which cut the glow into a box */
-.panel-her { display: block; width: 170px; height: auto; margin-top: 36px; filter: drop-shadow(0 0 28px rgba(88,230,255,.22)); opacity: 0; transform: translateY(30px); transition: opacity .8s .65s, transform .8s .65s var(--ease-out); }
-.panel.is-open .panel-her { opacity: 1; transform: none; }
 .panel-form { display: grid; gap: 22px; }
 .field { display: grid; gap: 2px; opacity: 0; transform: translateY(36px); transition: opacity .7s, transform .7s var(--ease-out); }
 .panel.is-open .field { opacity: 1; transform: none; }
@@ -674,15 +672,10 @@ body.no-js-gate .gate { display: none; }
   .foot-col, .foot-col.wide { grid-column: span 6; }
   .panel { inset: 6px; border-radius: 24px; }
   .panel-in { grid-template-columns: 1fr; gap: 36px; padding: 72px 22px 40px; }
-  .panel-her { display: none; }
   .say { text-align: left; }
   .speaking { top: auto; bottom: 84px; }
 }
 
-/* small phones: five links do not fit beside her emblem; Robots steps out of the pill (the footer still has it) */
-@media (max-width: 374px) {
-  .pill a[href="#walk"] { display: none; }
-}
 @media (max-width: 340px) {
   .pill a, .pill button { padding: 8px 4px; letter-spacing: 0; }
 }
@@ -690,5 +683,5 @@ body.no-js-gate .gate { display: none; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .grain, .chip-float, .cue::after, .eq i, .forget .dot { animation: none; }
-  .split .line-in, .reveal-fade, .chip, .field, .panel, .panel-her, .wc { transition: none; }
+  .split .line-in, .reveal-fade, .chip, .field, .panel, .wc { transition: none; }
 }
